@@ -1,0 +1,14 @@
+all: Projekt.o
+
+ISensor.o: ISensor.cpp
+	g++ -c ISensor.cpp -lwiringPi
+	
+SensorUp.o: SensorUp.cpp
+	g++ -c SensorUp.cpp -lwiringPi
+	
+SensorMid.o: SensorMid.cpp
+	g++ -c SensorMid.cpp -lwiringPi
+
+Projekt.o: Projekt.cpp ISensor.o SensorMid.o SensorUp.o 
+	g++ Projekt.cpp -lwiringPi -lpthread
+	
