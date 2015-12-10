@@ -1,6 +1,7 @@
 #include "ISensor.h"
 
 
+ISensor::~ISensor(){}
 
 int* ISensor::getData(){
 	return data;

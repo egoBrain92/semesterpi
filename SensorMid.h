@@ -1,4 +1,7 @@
-#include "ISensor.cpp"
+#ifndef SENSORMID_H_
+#define SENSORMID_H_
+
+#include "ISensor.h"
 
 
 
@@ -12,4 +15,4 @@ class SensorMid: public ISensor{
 		int echoPin;
 		int trigPin;
 };
-
+#endif

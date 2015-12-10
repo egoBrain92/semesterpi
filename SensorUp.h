@@ -1,7 +1,8 @@
-#include "ISensor.cpp"
-
 #ifndef SENSORUP_H_
 #define SENSORUP_H_
+
+#include "ISensor.h"
+
 
 
 
@@ -15,5 +16,5 @@ class SensorUp: public ISensor{
 		int echoPin;
 		int trigPin;
 };
+#endif
 
-#endif /* SENSORUP_H_ */

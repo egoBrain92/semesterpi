@@ -1,7 +1,8 @@
 #include <iostream>
 #include "SensorMid.h"
-#ifndef SENSORMID_CPP_
-#define SENSORMID_CPP_
+#include <stdio.h>
+#include <unistd.h>
+#include <iostream>
 
 
 	
@@ -17,6 +18,7 @@ SensorMid::~SensorMid(){
 void* SensorMid::calcDistance(){
 	while(1){
 		std::cout<<"Distanz"<<std::endl;
+		sleep(3);
 	}
 }			
- #endif
+

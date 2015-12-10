@@ -3,13 +3,14 @@
 #include <iostream>
 #include <pthread.h>
 #include <cstdlib>
-#include "SensorMid.cpp"
-#include "SensorUp.cpp"
+#include "SensorMid.h"
+#include "SensorUp.h"
 
 using namespace std;
+
 void* thread(void* sensor){
-	ISensor* b = (ISensor*) sensor;
-	b->calcDistance();
+	ISensor* mySen = (ISensor*) sensor;
+	mySen->calcDistance();
 }
 void* test(void* bla){
 	cout<<"test"<<endl;
