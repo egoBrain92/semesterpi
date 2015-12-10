@@ -9,7 +9,8 @@ class SensorMid: public ISensor{
 	public:	
 		SensorMid(int, int);
 		~SensorMid();
-		void* calcDistance();
+		int calcDistance();
+		void initiateMeasurement()(int);
 				
 	private:
 		int echoPin;

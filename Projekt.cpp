@@ -10,7 +10,9 @@ using namespace std;
 
 void* thread(void* sensor){
 	ISensor* mySen = (ISensor*) sensor;
-	mySen->calcDistance();
+	while(1){
+		cout<<mySen->calcDistance()<<endl;
+	}
 }
 void* test(void* bla){
 	cout<<"test"<<endl;
