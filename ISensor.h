@@ -10,14 +10,17 @@
 class ISensor{
 	public:
 		virtual int calcDistance() = 0;
-		virtual void initiateMeasurement() = 0;
+		virtual void initiateMeasurement(int) = 0;
 		virtual ~ISensor();
 		int* getData();
 		int calcMidValue();
+		int getmmCounter();
+		void collectMeasurements();
 			
 
 	private:
 		int data[MIDDLE];
+		int mmCounter;
 		
 };
 

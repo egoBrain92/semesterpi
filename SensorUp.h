@@ -11,7 +11,7 @@ class SensorUp: public ISensor{
 		SensorUp(int, int);
 		~SensorUp();
 		int calcDistance();
-		void initiateMeasurement()(int);
+		void initiateMeasurement(int);
 				
 	private:
 		int echoPin;

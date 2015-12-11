@@ -17,12 +17,12 @@ SensorMid::~SensorMid(){
 }
 
 //Send trig pulse
-void SensorMid::initiateMeasurement()(int tPin){
+void SensorMid::initiateMeasurement(int tPin){
         digitalWrite(tPin, LOW);
         delayMicroseconds(5);
         digitalWrite(tPin, HIGH);
         delayMicroseconds(10);
-        digitalWrite(tPin, LOW);
+        digitalWrite(tPin, LOW); 
 }
 		
 			
@@ -47,9 +47,11 @@ int SensorMid::calcDistance(){
 		distance = travelTime / DIV;
 	}
 	else{
-		distance = 0;
+		distance = 151;
 	}
     return distance;
 }
+
+
 			
 

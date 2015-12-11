@@ -11,7 +11,8 @@ using namespace std;
 void* thread(void* sensor){
 	ISensor* mySen = (ISensor*) sensor;
 	while(1){
-		cout<<mySen->calcDistance()<<endl;
+		mySen->collectMeasurements();
+		mySen->calcMidValue();
 	}
 }
 void* test(void* bla){

@@ -15,12 +15,12 @@ SensorUp::SensorUp(int ePin, int tPin)
 SensorUp::~SensorUp(){
 
 }
-void SensorUp::initiateMeasurement()(int tPin){
-		digitalWrite(tPin, LOW);
+void SensorUp::initiateMeasurement(int tPin){
+	digitalWrite(tPin, LOW);
         delayMicroseconds(5);
         digitalWrite(tPin, HIGH);
         delayMicroseconds(10);
-        digitalWrite(tPin, LOW);
+        digitalWrite(tPin, LOW); 
 }
 			
 int SensorUp::calcDistance(){
