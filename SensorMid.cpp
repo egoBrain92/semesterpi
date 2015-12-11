@@ -27,8 +27,9 @@ void SensorMid::initiateMeasurement(int tPin){
 		
 			
 int SensorMid::calcDistance(){
-	int distance = 1;
-  /*  triggerSensor(trigPin);   
+	int distance = 0;
+    initiateMeasurement(trigPin);   
+
         
     //Wait for echo start
     while(digitalRead(echoPin) == LOW);
