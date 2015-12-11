@@ -28,7 +28,7 @@ void SensorMid::initiateMeasurement(int tPin){
 			
 int SensorMid::calcDistance(){
 	int distance = 0;
-    initiateMeasurement(trigPin);   
+    /*initiateMeasurement(trigPin);   
 
         
     //Wait for echo start
