@@ -16,12 +16,17 @@ class ISensor{
 		int calcMidValue();
 		int getmmCounter();
 		void collectMeasurements();
+		void pushData(int[], int, int);
+		virtual int getId() = 0;
+		
 			
 
 	private:
 		int data[MIDDLE];
 		int mmCounter;
+		int id;
 		
+	
 };
 
 #endif

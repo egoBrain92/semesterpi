@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
-#include <wiringPi.h>
+//#include <wiringPi.h>
 
 
 	
-SensorMid::SensorMid(int ePin, int tPin)
-: echoPin(ePin), trigPin(tPin){
+SensorMid::SensorMid(int ePin, int tPin, int sensId)
+: echoPin(ePin), trigPin(tPin), id(sensId){
 
 }
 
@@ -18,17 +18,17 @@ SensorMid::~SensorMid(){
 
 //Send trig pulse
 void SensorMid::initiateMeasurement(int tPin){
-        digitalWrite(tPin, LOW);
+      /*  digitalWrite(tPin, LOW);
         delayMicroseconds(5);
         digitalWrite(tPin, HIGH);
         delayMicroseconds(10);
-        digitalWrite(tPin, LOW); 
+        digitalWrite(tPin, LOW); */
 }
 		
 			
 int SensorMid::calcDistance(){
-	int distance = 0;
-    triggerSensor(trigPin);   
+	int distance = 1;
+  /*  triggerSensor(trigPin);   
         
     //Wait for echo start
     while(digitalRead(echoPin) == LOW);
@@ -48,8 +48,11 @@ int SensorMid::calcDistance(){
 	}
 	else{
 		distance = 151;
-	}
+	}*/
     return distance;
+}
+int SensorMid::getId(){
+	return id;
 }
 
 

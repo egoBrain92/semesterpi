@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
-#include <wiringPi.h>
+//#include <wiringPi.h>
 
 
 	
-SensorUp::SensorUp(int ePin, int tPin)
-: echoPin(ePin), trigPin(tPin){
+SensorUp::SensorUp(int ePin, int tPin, int id)
+: echoPin(ePin), trigPin(tPin), id(id){
 
 }
 
@@ -16,15 +16,18 @@ SensorUp::~SensorUp(){
 
 }
 void SensorUp::initiateMeasurement(int tPin){
-	digitalWrite(tPin, LOW);
+	/*digitalWrite(tPin, LOW);
         delayMicroseconds(5);
         digitalWrite(tPin, HIGH);
         delayMicroseconds(10);
-        digitalWrite(tPin, LOW); 
+        digitalWrite(tPin, LOW); */
 }
 			
 int SensorUp::calcDistance(){
-	sleep(5);
+	
 	return 5;
+}
+int SensorUp::getId(){
+	return id;
 }			
 

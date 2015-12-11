@@ -8,14 +8,16 @@
 
 class SensorUp: public ISensor{	
 	public:	
-		SensorUp(int, int);
+		SensorUp(int, int, int);
 		~SensorUp();
 		int calcDistance();
 		void initiateMeasurement(int);
+		int getId();
 				
 	private:
 		int echoPin;
 		int trigPin;
+		int id;
 };
 #endif
 
