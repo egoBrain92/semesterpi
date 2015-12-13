@@ -1,3 +1,4 @@
+
 #ifndef ISENSOR_H_
 #define ISENSOR_H_
 
@@ -5,6 +6,7 @@
 
 #define TIMEOUT 9000
 #define DIV 58
+
 
 
 class ISensor{

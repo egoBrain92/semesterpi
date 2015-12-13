@@ -8,6 +8,8 @@
 
 #define NUMBER_OF_SENSORS 3 
 
+pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+
 using namespace std;
 
 		/*distances of all Sensors
@@ -25,8 +27,9 @@ void* thread(void* sensor){
 		mySen->collectMeasurements();
 		cout<<"	Sensor: "<<mySen->getId()<<endl;
 		cout<<"	calcMidValue: "<<mySen->calcMidValue()<<endl;
-		
+		pthread_mutex_lock(&mut);
 		mySen->pushData(distances, mySen->getId(), mySen->calcMidValue());
+		pthread_mutex_unlock(&mut);
 		sleep(2);
 	}
 }
