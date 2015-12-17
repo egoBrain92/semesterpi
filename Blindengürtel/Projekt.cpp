@@ -48,9 +48,13 @@ void* apFunction(void* audioPlayer){
 	soundPair* sound;
 	AudioPlayer* ap = (AudioPlayer*) audioPlayer;
 	while(1){
+		pthread_mutex_lock(&mut);
 		sound = ap->chooseSound(distances);
+		pthread_mutex_unlock(&mut);
 		if (sound->soundPath != NO_SOUND){
+			pthread_mutex_lock(&mut);
 			ap->setPause(ap->calcIntensity(distances[sound->soundIndex], MAXDISTANCE));
+			pthread_mutex_unlock(&mut);
 			ap->playSound(sound->soundPath);
 		}
 	}
