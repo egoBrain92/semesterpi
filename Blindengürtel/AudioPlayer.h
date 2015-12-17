@@ -4,11 +4,11 @@
 #ifndef AUDIOPLAYER_H_
 #define AUDIOPLAYER_H_
 
-#define NO_SOUND "......"
-#define SOUND_UPPER "pfad/zur/sounddatei"
-#define SOUND_MID "pfad/zur/sounddatei"
-#define SOUND_LOWER "pfad/zur/sounddatei"
-#define ERROR_SOUND "pfad/zur/sounddatei"
+#define NO_SOUND "/home/pi/Desktop/woop.mp3"
+#define SOUND_UPPER "/home/pi/Desktop/woop.mp3"
+#define SOUND_MID "/home/pi/Desktop/woop.mp3"
+#define SOUND_LOWER "/home/pi/Desktop/woop.mp3"
+#define ERROR_SOUND "/home/pi/Desktop/woop.mp3"
 
 #define MAXDISTANCE 150
 
