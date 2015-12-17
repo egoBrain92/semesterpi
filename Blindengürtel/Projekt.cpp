@@ -6,6 +6,7 @@
 #include "SensorMid.h"
 #include "SensorUp.h"
 #include "SensorLow.h"
+#include "AudioPlayer.h"
 
 #define NUMBER_OF_SENSORS 3
 
@@ -30,7 +31,7 @@ double distances[NUMBER_OF_SENSORS];
 //thread function: same function for different threads, just differs in parameter (polymorphy)
 void* thread(void* sensor){
 	ISensor* mySen = (ISensor*) sensor;
-	
+
 	while(1){
 		cout<<"newThread"<<endl;
 		mySen->collectMeasurements();
@@ -43,9 +44,22 @@ void* thread(void* sensor){
 	}
 }
 
+void* apFunction(void* audioPlayer){
+	string sound;
+	int intensity;
+	AudioPlayer* ap = (AudioPlayer*) audioPlayer;
+	while(1){
+		sound = ap->chooseSound(distances);
+		if (sound != NO_SOUND){
+			//intensity = ap->calcIntensity(distance);
+			ap->playSound(sound);
+		}
+	}
+}
+
 int main()
-{	
-	
+{
+	AudioPlayer* ap = new AudioPlayer(1);
 
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
@@ -54,37 +68,44 @@ int main()
 	int checkMid;
 	int checkLow;
 	int checkUp;
-	
+	int checkAP;
+
 	//initialize threads
 	pthread_t t1;
 	pthread_t t2;
 	pthread_t t3;
-	
+	pthread_t audioThread;
+
 	//create first thread for middle sensor
 	checkMid = pthread_create(&t1, NULL, thread, (void*)senMid);
 	if(checkMid){
 		cout<<"unable to create thread"<<endl;
 		exit(-1);
-	}  
-	
+	}
+
 	//create second thread for upper sensor
-	checkUp = pthread_create(&t1, NULL, thread, (void*)senUp);
+	checkUp = pthread_create(&t2, NULL, thread, (void*)senUp);
 	if(checkUp){
 		cout<<"unable to create thread"<<endl;
 		exit(-1);
 	}
 
-	checkLow = pthread_create(&t1, NULL, thread, (void*)senLow);
+	checkLow = pthread_create(&t3, NULL, thread, (void*)senLow);
 		if(checkLow){
 			cout<<"unable to create thread"<<endl;
 			exit(-1);
 		}
-	
+
+	checkAP = pthread_create(&audioThread, NULL, thread, (void*)senLow);
+		if(checkLow){
+			cout<<"unable to create thread"<<endl;
+			exit(-1);
+	}
 	while(1){
 		cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
 		sleep(1);
 	}
-	
+
     return 0;
 }
 

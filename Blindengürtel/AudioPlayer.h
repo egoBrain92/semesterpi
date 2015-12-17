@@ -1,4 +1,5 @@
 #include <string>
+#include <utility>
 
 #ifndef AUDIOPLAYER_H_
 #define AUDIOPLAYER_H_
@@ -15,11 +16,11 @@
 class AudioPlayer {
 	public:
 		AudioPlayer(int);
-		void playSound();
-		std::string chooseSound(int[]);
-		int chooseIntensity(int);
+		void playSound(std::string);
+		std::pair chooseSound(double[]);
+		double calcIntensity(double, int);
 		void setPause(int);
-		int getPause();
+		int getPause(void);
 	
 	private:
 		int pause;
