@@ -6,9 +6,6 @@
 #include <unistd.h>
 
 
-
-
-
 using namespace std;
 
 AudioPlayer::AudioPlayer(int pause)
@@ -24,33 +21,38 @@ int AudioPlayer::getPause(){
 	return pause;
 }
 
-pair chooseSound(double distances[]){
+void AudioPlayer::setPause(int newPause){
+	pause = newPause;
+}
+
+soundPair* AudioPlayer::chooseSound(double distances[]){
 	int i;
-	pair<string, int> sound;
-	int soundNr = -1;
+	soundPair* sound = new soundPair;
 	int distance = MAXDISTANCE;	
 	for(i = 0; i < sizeof(distances)/sizeof(*distances); i++){
-		if(distances[i] <= distance){
+		if(distances[i] <= distance && distances[i] <= MAXDISTANCE){
 			distance = distances[i];
-			soundNr = i;
-
+			sound->soundIndex = i;
+		}else{
+			sound->soundIndex = -1;
 		}
 	}
-	switch(soundNr){
+	switch(sound->soundIndex){
 		case -1:
-			sound.first_type = NO_SOUND;
+			sound->soundPath = NO_SOUND;
 			break;		
 		case 0:
-			sound = SOUND_UPPER;
+			sound->soundPath = SOUND_UPPER;
 			break;
 		case 1:
-			sound = SOUND_MID;
+			sound->soundPath = SOUND_MID;
 			break;
 		case 2:
-			sound = SOUND_LOWER;
+			sound->soundPath = SOUND_LOWER;
 			break;
 		default: 
-			sound = ERROR_SOUND;
+			sound->soundPath = ERROR_SOUND;
+			sound->soundIndex = -2;
 			break;
 	}
 	return sound;

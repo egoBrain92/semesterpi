@@ -45,14 +45,13 @@ void* thread(void* sensor){
 }
 
 void* apFunction(void* audioPlayer){
-	string sound;
-	int intensity;
+	soundPair* sound;
 	AudioPlayer* ap = (AudioPlayer*) audioPlayer;
 	while(1){
 		sound = ap->chooseSound(distances);
-		if (sound != NO_SOUND){
-			//intensity = ap->calcIntensity(distance);
-			ap->playSound(sound);
+		if (sound->soundPath != NO_SOUND){
+			ap->setPause(ap->calcIntensity(distances[sound->soundIndex], MAXDISTANCE));
+			ap->playSound(sound->soundPath);
 		}
 	}
 }
@@ -96,8 +95,8 @@ int main()
 			exit(-1);
 		}
 
-	checkAP = pthread_create(&audioThread, NULL, thread, (void*)senLow);
-		if(checkLow){
+	checkAP = pthread_create(&audioThread, NULL, apFunction, (void*)ap);
+		if(checkAP){
 			cout<<"unable to create thread"<<endl;
 			exit(-1);
 	}

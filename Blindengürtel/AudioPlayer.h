@@ -1,5 +1,4 @@
 #include <string>
-#include <utility>
 
 #ifndef AUDIOPLAYER_H_
 #define AUDIOPLAYER_H_
@@ -12,12 +11,16 @@
 
 #define MAXDISTANCE 150
 
+typedef struct soundPair {
+	int soundIndex = -1;
+	std::string soundPath;
+} soundPair;
 
 class AudioPlayer {
 	public:
 		AudioPlayer(int);
 		void playSound(std::string);
-		std::pair chooseSound(double[]);
+		soundPair* chooseSound(double[]);
 		double calcIntensity(double, int);
 		void setPause(int);
 		int getPause(void);
