@@ -18,15 +18,19 @@ typedef struct soundPair {
 
 class AudioPlayer {
 	public:
-		AudioPlayer(int);
+		AudioPlayer(int, soundPair*);
 		void playSound(std::string);
 		soundPair* chooseSound(double[]);
 		double calcIntensity(double, int);
 		void setPause(int);
 		int getPause(void);
+		soundPair* getSoundPair(void);
+
+
 	
 	private:
 		int pause;
+		soundPair* sound;
 };
 
 #endif

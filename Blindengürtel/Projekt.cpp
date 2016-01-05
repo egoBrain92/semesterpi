@@ -45,24 +45,19 @@ void* thread(void* sensor){
 }
 
 void* apFunction(void* audioPlayer){
-	soundPair* sound;
 	AudioPlayer* ap = (AudioPlayer*) audioPlayer;
 	while(1){
-		pthread_mutex_lock(&mut);
-		sound = ap->chooseSound(distances);
-		pthread_mutex_unlock(&mut);
-		if (sound->soundPath != NO_SOUND){
-			pthread_mutex_lock(&mut);
-			ap->setPause(ap->calcIntensity(distances[sound->soundIndex], MAXDISTANCE));
-			pthread_mutex_unlock(&mut);
-			ap->playSound(sound->soundPath);
+		if(ap->chooseSound(distances)->soundPath != NO_SOUND){
+			ap->setPause(ap->calcIntensity(distances[ap->getSoundPair()->soundIndex], MAXDISTANCE));
+			ap->playSound(ap->getSoundPair()->soundPath);
 		}
 	}
 }
 
 int main()
 {
-	AudioPlayer* ap = new AudioPlayer(1);
+	soundPair* sp = new soundPair;
+	AudioPlayer* ap = new AudioPlayer(1, sp);
 
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);

@@ -8,54 +8,58 @@
 
 using namespace std;
 
-AudioPlayer::AudioPlayer(int pause)
-:pause(pause){}
+AudioPlayer::AudioPlayer(int pause, soundPair* sp)
+:pause(pause), sound(sp){}
 
 void AudioPlayer::playSound(string soundPath){
 	sleep(pause);
-	string sound = string("omxplayer ")+ soundPath;
+	string sound = string("aplay ")+ soundPath;
 	system(sound.c_str());
 }
 
 int AudioPlayer::getPause(){
-	return pause;
+	return this->pause;
 }
 
+soundPair* AudioPlayer::getSoundPair(){
+	return this->sound;
+}
+
+
 void AudioPlayer::setPause(int newPause){
-	pause = newPause;
+	this->pause = newPause;
 }
 
 soundPair* AudioPlayer::chooseSound(double distances[]){
 	int i;
-	soundPair* sound = new soundPair;
 	int distance = MAXDISTANCE;	
 	for(i = 0; i < sizeof(distances)/sizeof(*distances); i++){
 		if(distances[i] <= distance && distances[i] <= MAXDISTANCE){
 			distance = distances[i];
-			sound->soundIndex = i;
+			this->sound->soundIndex = i;
 		}else{
-			sound->soundIndex = -1;
+			this->sound->soundIndex = -1;
 		}
 	}
-	switch(sound->soundIndex){
+	switch(this->sound->soundIndex){
 		case -1:
-			sound->soundPath = NO_SOUND;
+			this->sound->soundPath = NO_SOUND;
 			break;		
 		case 0:
-			sound->soundPath = SOUND_UPPER;
+			this->sound->soundPath = SOUND_UPPER;
 			break;
 		case 1:
-			sound->soundPath = SOUND_MID;
+			this->sound->soundPath = SOUND_MID;
 			break;
 		case 2:
-			sound->soundPath = SOUND_LOWER;
+			this->sound->soundPath = SOUND_LOWER;
 			break;
 		default: 
-			sound->soundPath = ERROR_SOUND;
-			sound->soundIndex = -2;
+			this->sound->soundPath = ERROR_SOUND;
+			this->sound->soundIndex = -2;
 			break;
 	}
-	return sound;
+	return this->sound;
 }
 
 double AudioPlayer::calcIntensity(double distance, int maxRange){
