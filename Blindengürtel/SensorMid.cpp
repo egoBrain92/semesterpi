@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
+#include <stdlib.h>
 //#include <wiringPi.h>
 
 
@@ -26,7 +27,7 @@ void SensorMid::initiateMeasurement(int tPin){
 }
 			
 double SensorMid::calcDistance(int travelTime){
-	int distance = 1;
+	int distance = rand() % 150 + 1;
     /*initiateMeasurement(trigPin);
 	   
 	//get Distance only if distance < "Erkennungsweite"

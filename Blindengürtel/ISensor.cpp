@@ -1,5 +1,7 @@
 #include "ISensor.h"
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 
 ISensor::~ISensor(){}
 
@@ -21,8 +23,8 @@ double ISensor::calcMidValue(){
 //put measurements in right position in array 
 void ISensor::collectMeasurements(){
 	data[mmCounter] = calcDistance(calcTravelTime());
-	std::cout<<" dataCounter: "<<data[mmCounter]<<std::endl;
-	std::cout<<" mmCounter: "<<mmCounter<<std::endl;
+	//std::cout<<" dataCounter: "<<data[mmCounter]<<std::endl;
+	//std::cout<<" mmCounter: "<<mmCounter<<std::endl;
 	if(mmCounter >= MIDDLE - 1){
 		mmCounter = 0;
 	}else{
@@ -46,7 +48,7 @@ double ISensor::calcTravelTime(){
 		//calculate travetime
 		long travelTime = micros() - startTime;
 		*/
-		double travelTime = 25000;
+		double travelTime = rand() % 25000;
 		return travelTime;
 }
 

@@ -12,7 +12,7 @@ AudioPlayer::AudioPlayer(int pause, soundPair* sp)
 :pause(pause), sound(sp){}
 
 void AudioPlayer::playSound(string soundPath){
-	sleep(pause);
+	sleep(this->getPause());
 	string sound = string("aplay ")+ soundPath;
 	system(sound.c_str());
 }
@@ -30,15 +30,16 @@ void AudioPlayer::setPause(int newPause){
 	this->pause = newPause;
 }
 
-soundPair* AudioPlayer::chooseSound(double distances[]){
+soundPair* AudioPlayer::chooseSound(double distances[], int arraySize){
 	int i;
-	int distance = MAXDISTANCE;	
-	for(i = 0; i < sizeof(distances)/sizeof(*distances); i++){
-		if(distances[i] <= distance && distances[i] <= MAXDISTANCE){
+	int distance = MAXDISTANCE;
+	this->sound->soundIndex = -1;
+
+	for(i = 0; i < arraySize; i++){ //sizeof(distances/sizeof(&distances[0])
+		//cout<<"distance["<<i<<"]"<<sizeof(distances)/sizeof(distances[0])<<endl;
+		if(distances[i] <= distance){
 			distance = distances[i];
 			this->sound->soundIndex = i;
-		}else{
-			this->sound->soundIndex = -1;
 		}
 	}
 	switch(this->sound->soundIndex){

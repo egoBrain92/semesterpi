@@ -33,23 +33,35 @@ void* thread(void* sensor){
 	ISensor* mySen = (ISensor*) sensor;
 
 	while(1){
-		cout<<"newThread"<<endl;
+		//cout<<"newThread"<<endl;
 		mySen->collectMeasurements();
-		cout<<"	Sensor: "<<mySen->getId()<<endl;
-		cout<<"	calcMidValue: "<<mySen->calcMidValue()<<endl;
+		//cout<<"	Sensor: "<<mySen->getId()<<endl;
+		//cout<<"	calcMidValue: "<<mySen->calcMidValue()<<endl;
 		pthread_mutex_lock(&mut);
 		mySen->pushData(distances, mySen->getId(), mySen->calcMidValue());
 		pthread_mutex_unlock(&mut);
-		sleep(2);
+		//sleep(2);
 	}
 }
 
 void* apFunction(void* audioPlayer){
+	string sound;
 	AudioPlayer* ap = (AudioPlayer*) audioPlayer;
 	while(1){
-		if(ap->chooseSound(distances)->soundPath != NO_SOUND){
+
+		pthread_mutex_lock(&mut);
+		sound = ap->chooseSound(distances, NUMBER_OF_SENSORS)->soundPath;
+		pthread_mutex_unlock(&mut);
+		//cout<<"soundpath: "<<sound<<endl;
+		if(sound != NO_SOUND){
+
+			pthread_mutex_lock(&mut);
 			ap->setPause(ap->calcIntensity(distances[ap->getSoundPair()->soundIndex], MAXDISTANCE));
+			pthread_mutex_unlock(&mut);
+
 			ap->playSound(ap->getSoundPair()->soundPath);
+			usleep(ap->getPause()*1000000);
+			cout<<"sound: "<<sound<<endl;
 		}
 	}
 }

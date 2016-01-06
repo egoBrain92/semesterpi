@@ -3,11 +3,11 @@
 #ifndef AUDIOPLAYER_H_
 #define AUDIOPLAYER_H_
 
-#define NO_SOUND "/home/pi/Desktop/woop.mp3"
-#define SOUND_UPPER "/home/pi/Desktop/woop.mp3"
-#define SOUND_MID "/home/pi/Desktop/woop.mp3"
-#define SOUND_LOWER "/home/pi/Desktop/woop.mp3"
-#define ERROR_SOUND "/home/pi/Desktop/woop.mp3"
+#define NO_SOUND "kurzerTon.wav"
+#define SOUND_UPPER "HighkurzerTon.wav"
+#define SOUND_MID "MidkurzerTon.wav"
+#define SOUND_LOWER "LowKurzerTon.wav"
+#define ERROR_SOUND "ErrorkurzerTon.wav"
 
 #define MAXDISTANCE 150
 
@@ -20,7 +20,7 @@ class AudioPlayer {
 	public:
 		AudioPlayer(int, soundPair*);
 		void playSound(std::string);
-		soundPair* chooseSound(double[]);
+		soundPair* chooseSound(double[], int);
 		double calcIntensity(double, int);
 		void setPause(int);
 		int getPause(void);
