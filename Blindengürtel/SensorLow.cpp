@@ -9,7 +9,7 @@
 
 
 SensorLow::SensorLow(int ePin, int tPin, int id)
-: echoPin(ePin), trigPin(tPin), id(id){
+: ISensor(ePin, tPin, id){
 
 }
 

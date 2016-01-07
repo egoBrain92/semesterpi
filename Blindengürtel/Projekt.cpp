@@ -57,7 +57,7 @@ void* thread(void* sensor){
 
 	while(1){
 		//cout<<"newThread"<<endl;
-		mySen->collectMeasurements(mySen->echoPin);
+		mySen->collectMeasurements();
 		usleep(50000);
 		cout<<"	Sensor: "<<mySen->getId()<<endl;
 		//cout<<"	calcMidValue: "<<mySen->calcMidValue()<<endl;
@@ -97,8 +97,8 @@ int main()
 	AudioPlayer* ap = new AudioPlayer(1, sp);
 
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
-	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
-	SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
+	//SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
+	//SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
 
 	int checkMid;
 	int checkLow;
@@ -118,7 +118,7 @@ int main()
 		exit(-1);
 	}
 
-	//create second thread for upper sensor
+	/*//create second thread for upper sensor
 	checkUp = pthread_create(&t2, NULL, thread, (void*)senUp);
 	if(checkUp){
 		cout<<"unable to create thread"<<endl;
@@ -130,7 +130,7 @@ int main()
 			cout<<"unable to create thread"<<endl;
 			exit(-1);
 		}
-	
+	*/
 	/*checkAP = pthread_create(&audioThread, NULL, apFunction, (void*)ap);
 		if(checkAP){
 			cout<<"unable to create thread"<<endl;

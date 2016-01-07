@@ -4,6 +4,12 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 
+ISensor::ISensor(int ePin, int tPin, int sensId)
+: echoPin(ePin), trigPin(tPin), id(sensId){
+
+	this->mmCounter=0;
+}
+
 ISensor::~ISensor(){}
 
 double* ISensor::getData(){
@@ -22,9 +28,9 @@ double ISensor::calcMidValue(){
 	return midValue; 
 }
 //put measurements in right position in array 
-void ISensor::collectMeasurements(int echoPin){
+void ISensor::collectMeasurements(){
 	std::cout<<"collectMeasurement: "<<echoPin<<std::endl;
-	data[mmCounter] = calcDistance(calcTravelTime(echoPin));
+	data[mmCounter] = calcDistance(calcTravelTime());
 	//std::cout<<" dataCounter: "<<data[mmCounter]<<std::endl;
 	std::cout<<" mmCounter: "<<mmCounter<<std::endl;
 	
@@ -40,17 +46,16 @@ void ISensor::pushData(double distances[], int sensorNr, double midDistance){
 	std::cout<<"pushdata: "<<sensorNr<<std::endl;
 }
 
-double ISensor::calcTravelTime(int echoPin){
+double ISensor::calcTravelTime(){
 	//Wait for echo start
 		initiateMeasurement();
-		std::cout<<"calcTravelTime: PIN: "<<echoPin<<std::endl;
-		std::cout<<"calc PIN: "<<this->echoPin<<std::endl;
-		while(digitalRead(echoPin) == LOW);
+		//std::cout<<"calcTravelTime: "<<echoPin<<std::endl;
+		//std::cout<<"calc PIN: "<<this->echoPin<<std::endl;
+		while(digitalRead(this->echoPin) == LOW);
 
 		long startTime = micros();
-		std::cout<<"calc PIN: "<<echoPin<<std::endl;
 		//Wait for echo end
-		while(digitalRead(echoPin) == HIGH);
+		while(digitalRead(this->echoPin) == HIGH);
 
 		//calculate travetime
 		long travelTime = micros() - startTime;
@@ -58,6 +63,30 @@ double ISensor::calcTravelTime(int echoPin){
 		//double travelTime = rand() % 25000;
 		return travelTime;
 }
+
+void ISensor::initiateMeasurement(){
+	std::cout<<"this->trig"<<this->trigPin<<std::endl;
+	std::cout<<"this->echo"<<this->echoPin<<std::endl;
+        
+        
+        digitalWrite(this->trigPin, LOW);
+        delayMicroseconds(5);
+        digitalWrite(this->trigPin, HIGH);
+        delayMicroseconds(10);
+        digitalWrite(this->trigPin, LOW); 
+}
+
+int ISensor::getEchoPin(){
+	return this->echoPin;
+}
+
+int ISensor::getTrigPin(){
+	return this->trigPin;
+}
+int ISensor::getId(){
+	return this->id;
+}
+
 
 
 

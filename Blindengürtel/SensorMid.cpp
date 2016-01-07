@@ -9,7 +9,7 @@
 
 	
 SensorMid::SensorMid(int ePin, int tPin, int sensId)
-: echoPin(ePin), trigPin(tPin), id(sensId){
+: ISensor(ePin, tPin, sensId){
 
 }
 
@@ -18,7 +18,7 @@ SensorMid::~SensorMid(){
 }
 
 //Send trig pulse
-void SensorMid::initiateMeasurement(){
+/*void SensorMid::initiateMeasurement(){
 		
 		std::cout<<"this->trig"<<this->trigPin<<std::endl;
 		std::cout<<"this->echo"<<this->echoPin<<std::endl;
@@ -30,10 +30,10 @@ void SensorMid::initiateMeasurement(){
         delayMicroseconds(10);
         digitalWrite(this->trigPin, LOW); 
         
-}
+}*/
 			
 double SensorMid::calcDistance(int travelTime){
-		double distance;
+		double distance = -1;
 	//int distance = rand() % 150 + 1;
 	   
 		//Get distance in cm
