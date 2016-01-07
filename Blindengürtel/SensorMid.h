@@ -10,12 +10,7 @@ class SensorMid: public ISensor{
 		SensorMid(int, int, int);
 		~SensorMid(void);
 		double calcDistance(int);
-		void initiateMeasurement();
-		int getId(void);
-				
-	private:
-		int echoPin;
-		int trigPin;
-		int id;  //kann id nicht auch in ISensor.h ???? aber wie????
+		
+		
 };
 #endif

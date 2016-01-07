@@ -8,6 +8,8 @@ ISensor::ISensor(int ePin, int tPin, int sensId)
 : echoPin(ePin), trigPin(tPin), id(sensId){
 
 	this->mmCounter=0;
+	std::cout<<"id: "<<id<<" data: "<<&data<<std::endl;
+	std::cout<<"id: "<<this->id<<" data: "<<&(this->data)<<std::endl;
 }
 
 ISensor::~ISensor(){}
@@ -29,10 +31,10 @@ double ISensor::calcMidValue(){
 }
 //put measurements in right position in array 
 void ISensor::collectMeasurements(){
-	std::cout<<"collectMeasurement: "<<echoPin<<std::endl;
+	//std::cout<<"collectMeasurement: "<<echoPin<<std::endl;
 	data[mmCounter] = calcDistance(calcTravelTime());
 	//std::cout<<" dataCounter: "<<data[mmCounter]<<std::endl;
-	std::cout<<" mmCounter: "<<mmCounter<<std::endl;
+	//std::cout<<" mmCounter: "<<mmCounter<<std::endl;
 	
 	if(mmCounter >= MIDDLE - 1){
 		mmCounter = 0;
@@ -61,12 +63,13 @@ double ISensor::calcTravelTime(){
 		long travelTime = micros() - startTime;
 		
 		//double travelTime = rand() % 25000;
+		//usleep(50000);
 		return travelTime;
 }
 
 void ISensor::initiateMeasurement(){
-	std::cout<<"this->trig"<<this->trigPin<<std::endl;
-	std::cout<<"this->echo"<<this->echoPin<<std::endl;
+	//std::cout<<"this->trig"<<this->trigPin<<std::endl;
+	//std::cout<<"this->echo"<<this->echoPin<<std::endl;
         
         
         digitalWrite(this->trigPin, LOW);

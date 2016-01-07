@@ -6,6 +6,10 @@ c: Projekt.cpp ISensor.cpp SensorMid.cpp SensorUp.cpp SensorLow.cpp
 w: Projekt.cpp ISensor.cpp SensorMid.cpp SensorUp.cpp
 	g++ -w Projekt.cpp ISensor.cpp SensorMid.cpp SensorUp.cpp SensorLow.cpp AudioPlayer.cpp -lpthread -lwiringPi
 
+wa: Projekt.cpp ISensor.cpp SensorMid.cpp SensorUp.cpp
+	g++ -w Projekt.cpp ISensor.cpp SensorMid.cpp SensorUp.cpp SensorLow.cpp AudioPlayer.cpp -lpthread -lwiringPi
+	sudo ./a.out
+
 a:	
 	sudo ./a.out
 

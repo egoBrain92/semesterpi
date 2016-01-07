@@ -23,6 +23,8 @@
 
 
 pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mut2 = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mut3 = PTHREAD_MUTEX_INITIALIZER;
 
 using namespace std;
 
@@ -56,11 +58,16 @@ void* thread(void* sensor){
 	ISensor* mySen = (ISensor*) sensor;
 
 	while(1){
+		
 		//cout<<"newThread"<<endl;
+		pthread_mutex_lock(&mut2);
 		mySen->collectMeasurements();
+		pthread_mutex_unlock(&mut2);
+		
+		pthread_mutex_lock(&mut3);
 		usleep(50000);
-		cout<<"	Sensor: "<<mySen->getId()<<endl;
-		//cout<<"	calcMidValue: "<<mySen->calcMidValue()<<endl;
+		pthread_mutex_unlock(&mut3);
+		
 		pthread_mutex_lock(&mut);
 		mySen->pushData(distances, mySen->getId(), mySen->calcMidValue());
 		pthread_mutex_unlock(&mut);
@@ -97,8 +104,8 @@ int main()
 	AudioPlayer* ap = new AudioPlayer(1, sp);
 
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
-	//SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
-	//SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
+	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
+	SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
 
 	int checkMid;
 	int checkLow;
@@ -118,7 +125,7 @@ int main()
 		exit(-1);
 	}
 
-	/*//create second thread for upper sensor
+	//create second thread for upper sensor
 	checkUp = pthread_create(&t2, NULL, thread, (void*)senUp);
 	if(checkUp){
 		cout<<"unable to create thread"<<endl;
@@ -130,7 +137,7 @@ int main()
 			cout<<"unable to create thread"<<endl;
 			exit(-1);
 		}
-	*/
+	
 	/*checkAP = pthread_create(&audioThread, NULL, apFunction, (void*)ap);
 		if(checkAP){
 			cout<<"unable to create thread"<<endl;

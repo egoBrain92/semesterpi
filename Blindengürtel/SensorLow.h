@@ -13,13 +13,7 @@ class SensorLow: public ISensor{
 		SensorLow(int, int, int);
 		~SensorLow(void);
 		double calcDistance(int);
-		void initiateMeasurement();
-		int getId(void);
-				
-	private:
-		int echoPin;
-		int trigPin;
-		int id;
+		
 };
 #endif
 
