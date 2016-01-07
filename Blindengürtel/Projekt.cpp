@@ -75,6 +75,9 @@ void* thread(void* sensor){
 	}
 }
 
+
+
+
 void* apFunction(void* audioPlayer){
 	string sound;
 	AudioPlayer* ap = (AudioPlayer*) audioPlayer;
@@ -83,6 +86,7 @@ void* apFunction(void* audioPlayer){
 		pthread_mutex_lock(&mut);
 		sound = ap->chooseSound(distances, NUMBER_OF_SENSORS)->soundPath;
 		pthread_mutex_unlock(&mut);
+		delayMicroseconds(1000);
 		//cout<<"soundpath: "<<sound<<endl;
 		if(sound != NO_SOUND){
 
@@ -91,7 +95,8 @@ void* apFunction(void* audioPlayer){
 			pthread_mutex_unlock(&mut);
 
 			ap->playSound(ap->getSoundPair()->soundPath);
-			usleep(ap->getPause()*1000000);
+
+			//delayMicroseconds(ap->getPause()*1000000);
 			cout<<"sound: "<<sound<<endl;
 		}
 	}
@@ -138,13 +143,14 @@ int main()
 			exit(-1);
 		}
 	
-	/*checkAP = pthread_create(&audioThread, NULL, apFunction, (void*)ap);
+	checkAP = pthread_create(&audioThread, NULL, apFunction, (void*)ap);
 		if(checkAP){
 			cout<<"unable to create thread"<<endl;
 			exit(-1);
-	}*/
+	}
 	while(1){
 		cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
+		
 		sleep(1);
 	}
 

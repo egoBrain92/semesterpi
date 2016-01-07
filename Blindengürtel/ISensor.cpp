@@ -56,6 +56,7 @@ double ISensor::calcTravelTime(){
 		while(digitalRead(this->echoPin) == LOW);
 
 		long startTime = micros();
+		
 		//Wait for echo end
 		while(digitalRead(this->echoPin) == HIGH);
 
