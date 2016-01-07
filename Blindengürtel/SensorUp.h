@@ -9,7 +9,7 @@ class SensorUp: public ISensor{
 		SensorUp(int, int, int);
 		~SensorUp(void);
 		double calcDistance(int);
-		void initiateMeasurement(int);
+		void initiateMeasurement();
 		int getId(void);
 				
 	private:

@@ -10,7 +10,7 @@ class SensorMid: public ISensor{
 		SensorMid(int, int, int);
 		~SensorMid(void);
 		double calcDistance(int);
-		void initiateMeasurement(int);
+		void initiateMeasurement();
 		int getId(void);
 				
 	private:

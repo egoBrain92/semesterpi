@@ -17,23 +17,25 @@
 class ISensor{
 	public:
 		virtual double calcDistance(int) = 0;
-		virtual void initiateMeasurement(int) = 0;
+		virtual void initiateMeasurement() = 0;
 		virtual int getId(void) = 0;
 		virtual ~ISensor();
 
-		double calcTravelTime(void);
+		double calcTravelTime(int);
 		double* getData(void);
 		double calcMidValue(void);
 		int getmmCounter(void);
-		void collectMeasurements(void);
+		void collectMeasurements(int);
 		void pushData(double[], int, double);
-		
+		int echoPin;
+		int trigPin;
+		double data[MIDDLE];
 
 			
 
 	private:
-		double data[MIDDLE];
-		int mmCounter;
+		
+		int mmCounter = 0;
 	
 };
 

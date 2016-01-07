@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <stdlib.h>
-//#include <wiringPi.h>
+#include <wiringPi.h>
 
 
 	
@@ -18,26 +18,28 @@ SensorMid::~SensorMid(){
 }
 
 //Send trig pulse
-void SensorMid::initiateMeasurement(int tPin){
-      /*  digitalWrite(tPin, LOW);
+void SensorMid::initiateMeasurement(){
+		
+		std::cout<<"this->trig"<<this->trigPin<<std::endl;
+		std::cout<<"this->echo"<<this->echoPin<<std::endl;
+        //std::cout<<"tpin Para"<<tPin<<std::endl;
+        
+        digitalWrite(this->trigPin, LOW);
         delayMicroseconds(5);
-        digitalWrite(tPin, HIGH);
+        digitalWrite(this->trigPin, HIGH);
         delayMicroseconds(10);
-        digitalWrite(tPin, LOW); */
+        digitalWrite(this->trigPin, LOW); 
+        
 }
 			
 double SensorMid::calcDistance(int travelTime){
-	int distance = rand() % 150 + 1;
-    /*initiateMeasurement(trigPin);
+		double distance;
+	//int distance = rand() % 150 + 1;
 	   
-	//get Distance only if distance < "Erkennungsweite"
-	if(travelTime < TIMEOUT){
 		//Get distance in cm
 		distance = travelTime / DIV;
-	}
-	else{
-		distance = NOTICE_RANGE + 1;
-	}*/
+		std::cout<<"distance calc:"<<distance<<"senID: "<<getId()<<std::endl;
+	
     return distance;
 }
 int SensorMid::getId(){

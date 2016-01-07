@@ -3,6 +3,7 @@
 #include <iostream>
 #include <pthread.h>
 #include <cstdlib>
+#include <wiringPi.h>
 #include "SensorMid.h"
 #include "SensorUp.h"
 #include "SensorLow.h"
@@ -11,11 +12,15 @@
 #define NUMBER_OF_SENSORS 3
 
 #define ECHO_PIN_SUP	15
-#define ECHO_PIN_SLOW	1
-#define ECHO_PIN_SMID	17
 #define TRIG_PIN_SUP	16
+
+#define ECHO_PIN_SLOW	1
 #define TRIG_PIN_SLOW	4
-#define TRIG_PIN_SMID	18
+
+#define ECHO_PIN_SMID	5
+#define TRIG_PIN_SMID	6
+
+
 
 pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
 
@@ -28,14 +33,33 @@ using namespace std;
 		*/
 double distances[NUMBER_OF_SENSORS];
 
+void setup() {
+        wiringPiSetup();
+        pinMode(ECHO_PIN_SUP, INPUT);
+        pinMode(TRIG_PIN_SUP, OUTPUT);
+        
+        digitalWrite(TRIG_PIN_SUP, LOW);
+
+		pinMode(TRIG_PIN_SLOW, OUTPUT);
+        pinMode(ECHO_PIN_SLOW, INPUT);
+        digitalWrite(TRIG_PIN_SLOW, LOW);
+
+		pinMode(ECHO_PIN_SMID, INPUT);
+		pinMode(TRIG_PIN_SMID, OUTPUT);
+        digitalWrite(TRIG_PIN_SMID, LOW);
+
+        //delay(30);
+}
+
 //thread function: same function for different threads, just differs in parameter (polymorphy)
 void* thread(void* sensor){
 	ISensor* mySen = (ISensor*) sensor;
 
 	while(1){
 		//cout<<"newThread"<<endl;
-		mySen->collectMeasurements();
-		//cout<<"	Sensor: "<<mySen->getId()<<endl;
+		mySen->collectMeasurements(mySen->echoPin);
+		usleep(50000);
+		cout<<"	Sensor: "<<mySen->getId()<<endl;
 		//cout<<"	calcMidValue: "<<mySen->calcMidValue()<<endl;
 		pthread_mutex_lock(&mut);
 		mySen->pushData(distances, mySen->getId(), mySen->calcMidValue());
@@ -68,6 +92,7 @@ void* apFunction(void* audioPlayer){
 
 int main()
 {
+	setup();
 	soundPair* sp = new soundPair;
 	AudioPlayer* ap = new AudioPlayer(1, sp);
 
@@ -105,12 +130,12 @@ int main()
 			cout<<"unable to create thread"<<endl;
 			exit(-1);
 		}
-
-	checkAP = pthread_create(&audioThread, NULL, apFunction, (void*)ap);
+	
+	/*checkAP = pthread_create(&audioThread, NULL, apFunction, (void*)ap);
 		if(checkAP){
 			cout<<"unable to create thread"<<endl;
 			exit(-1);
-	}
+	}*/
 	while(1){
 		cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
 		sleep(1);

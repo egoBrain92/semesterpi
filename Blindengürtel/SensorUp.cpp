@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <cmath>
-//#include <wiringPi.h>
+#include <wiringPi.h>
 
 #define SENUP_ANGLE 33
 
@@ -18,12 +18,12 @@ SensorUp::SensorUp(int ePin, int tPin, int id)
 SensorUp::~SensorUp(){
 
 }
-void SensorUp::initiateMeasurement(int tPin){
-	/*digitalWrite(tPin, LOW);
+void SensorUp::initiateMeasurement(){
+	digitalWrite(this->trigPin, LOW);
         delayMicroseconds(5);
-        digitalWrite(tPin, HIGH);
+        digitalWrite(this->trigPin, HIGH);
         delayMicroseconds(10);
-        digitalWrite(tPin, LOW); */
+        digitalWrite(this->trigPin, LOW); 
 }
 			
 double SensorUp::calcDistance(int travelTime){
