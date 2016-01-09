@@ -13,10 +13,11 @@
 #include <SFML/Audio.hpp>
 
 #define NO_SOUND "NOSOUND"
-#define SOUND_UPPER "HighkurzerTon.wav"
-#define SOUND_MID "MidkurzerTon.wav"
+#define SOUND_UPPER "sound3.wav"
+#define SOUND_MID "sound4.wav"
 #define SOUND_LOWER "LowKurzerTon.wav"
 #define ERROR_SOUND "ErrorkurzerTon.wav"
+
 
 #define NUMBER_OF_SENSORS 3
 #define INIT_ARRAY_VAL 999999
@@ -131,15 +132,40 @@ void apFunction(AudioPlayer* ap){
 	}
 }
 void myFunction(){
-	sf::SoundBuffer sb;
+	sf::SoundBuffer sb1;
 	sf::SoundBuffer sb2;
 	sf::SoundBuffer sb3;
-	sf::Sound sound;
+	sf::Sound sound1;
+	sf::Sound sound2;
+	sf::Sound sound3;
 	
-	sb.loadFromFile("HighkurzerTon.wav");
-	sound.setBuffer(sb);
+	sb1.loadFromFile(SOUND_UPPER);
+	sound1.setBuffer(sb1);
+	
+	sb2.loadFromFile(SOUND_LOWER);
+	sound2.setBuffer(sb2);
+	
+	sb3.loadFromFile(SOUND_MID);
+	sound3.setBuffer(sb3);
+	
 	while(1){
-		sound.play();
+		if(soundPath == SOUND_UPPER){
+			sound1.setBuffer(sb1);
+			sound1.play();
+		}
+		
+		if(soundPath == SOUND_LOWER){
+			sound1.setBuffer(sb2);
+			sound1.play();
+			//sound2.play();
+		}
+		
+		if(soundPath == SOUND_MID){
+			sound1.setBuffer(sb3);
+			sound1.play();
+			//sound3.play();
+		}
+
 		usleep(intensity * 1000000);
 	}
 }
@@ -225,13 +251,13 @@ int main()
 		senLow->pushData(distances, senLow->getId(), senLow->calcMidValue());
 	
 		
-		usleep(100000);
+		usleep(50000);
 		
 	
 	soundIndex = -1;
 	distance = 150;
 
-	for(i = 0; i < 3; i++){ //sizeof(distances/sizeof(&distances[0])
+	for(i = 0; i < NUMBER_OF_SENSORS; i++){ //sizeof(distances/sizeof(&distances[0])
 		//cout<<"distance["<<i<<"]"<<sizeof(distances)/sizeof(distances[0])<<endl;
 		if(distances[i] <= distance){
 			distance = distances[i];
@@ -258,10 +284,11 @@ int main()
 	}
 	mtx1.unlock();
 	
+	if(soundIndex != -1){
 	mtx2.lock();
-	intensity = distances[soundIndex]/150;
+	intensity = distances[soundIndex]/MAXDISTANCE;
 	mtx2.unlock();
-			
+	}		
 			
 			
 	
