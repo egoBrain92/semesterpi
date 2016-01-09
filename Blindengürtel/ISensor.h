@@ -28,10 +28,10 @@ class ISensor{
 		double* getData(void);
 		double calcMidValue(void);
 		int getmmCounter(void);
-		void collectMeasurements();
+		void collectMeasurements(int);
 		void pushData(double[], int, double);
 		
-		double data[MIDDLE];
+		double data[MIDDLE] = {0, 0, 0};
 
 			
 

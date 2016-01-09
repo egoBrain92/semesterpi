@@ -57,22 +57,22 @@ void setup() {
 }
 
 //thread function: same function for different threads, just differs in parameter (polymorphy)
-void threadbla(ISensor* mySen){
+/*void threadbla(ISensor* mySen){
 	
 
 	while(1){
 		
 		
 		
-		mtx2.lock();
+		//mtx2.lock();
 		mySen->collectMeasurements();
-		mtx2.unlock();
+		//mtx2.unlock();
 		
 		
 		
-		mtx3.lock();
+		//mtx3.lock();
 		usleep(50000);
-		mtx3.unlock();
+		//mtx3.unlock();
 		
 		
 		
@@ -81,7 +81,7 @@ void threadbla(ISensor* mySen){
 		mtx1.unlock();
 		
 	}
-}
+}*/
 
 
 void apFunction(AudioPlayer* ap){
@@ -126,25 +126,87 @@ void apFunction(AudioPlayer* ap){
 int main()
 {
 	setup();
+	long travelTimeUp;
+	long travelTimeLow;
+	long travelTimeMid;
+	
+	bool checkMid;
+	bool checkUp;
+	bool checkLow;
 	soundPair* sp = new soundPair;
 	AudioPlayer* ap = new AudioPlayer(1, sp);
+	
 
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
 	SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
+	
+	while(1){
+		checkMid = false;
+		checkUp = false;
+		checkLow = false;
+		
+		senLow->initiateMeasurement();
+		usleep(500);
+		senUp->initiateMeasurement();
+		usleep(500);
+		senMid->initiateMeasurement();
+		usleep(500);
+		
+	//	cout<<"bla"<<endl;
+		while(digitalRead(senMid->getEchoPin()) == LOW && digitalRead(senUp->getEchoPin()) == LOW && digitalRead(senLow->getEchoPin()) == LOW){
+			//cout<<"wait"<<endl;
+			}
+		long startTime = micros();
+		//cout<<"startTime: "<<startTime<<endl;
+		//usleep(10000);
+		while(digitalRead(senMid->getEchoPin()) == HIGH || digitalRead(senUp->getEchoPin()) == HIGH || digitalRead(senLow->getEchoPin()) == HIGH){
+		//cout<<"while"<<endl;
+			if(digitalRead(senMid->getEchoPin()) == LOW && checkMid == false){
+				//cout<<"senMid"<<endl;
+				//cout<<"micros(): "<<micros()<<endl;
+				travelTimeMid = micros() - startTime;
+				
+				checkMid = true;
+			}
+			if(digitalRead(senUp->getEchoPin()) == LOW && checkUp == false){
+				//cout<<"senUp"<<endl;
+				travelTimeUp = micros() - startTime;
+				checkUp = true;
+			}
+			if(digitalRead(senLow->getEchoPin()) == LOW && checkLow == false){
+				//cout<<"senLow"<<endl;
+				travelTimeLow = micros() - startTime;
+				checkLow = true;
+			}		
+		}
+		cout<<"travelTimeUp: "<<travelTimeUp<<" / travelTimeMid: "<<travelTimeMid<<" / travelTimeLow: "<<travelTimeLow<<endl;
+		senMid->collectMeasurements(travelTimeMid);
+		senUp->collectMeasurements(travelTimeUp);
+		senLow->collectMeasurements(travelTimeLow);
+		
+		senMid->pushData(distances, senMid->getId(), senMid->calcMidValue());
+		senUp->pushData(distances, senUp->getId(), senUp->calcMidValue());
+		senLow->pushData(distances, senLow->getId(), senLow->calcMidValue());
+		
+		usleep(50000);
+		
+		cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
+	}
+	
     /*
 	int checkMid;
 	int checkLow;
 	int checkUp;
 	int checkAP;
 	*/
-	sleep(1);
+	//sleep(1);
 	//initialize threads
-	thread t1 (threadbla, senMid);
+	/*thread t1 (threadbla, senMid);
 	thread t2 (threadbla, senLow);
 	thread t3 (threadbla, senUp);
 	thread t4 (apFunction, ap);
-	
+	*/
 	/*sf::SoundBuffer buffer;
 	sf::Sound sound;
 
@@ -166,15 +228,12 @@ int main()
 		
 	}*/
 	//cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
-	while(1){
-		
-		//sleep(2);
-	}
-	t1.join();
+	
+	/*t1.join();
 	t2.join();
 	t3.join();
 	t4.join();
-	
+	*/
 
     return 0;
 }

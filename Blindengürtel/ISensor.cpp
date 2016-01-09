@@ -30,16 +30,16 @@ double ISensor::calcMidValue(){
 	return midValue; 
 }
 //put measurements in right position in array 
-void ISensor::collectMeasurements(){
+void ISensor::collectMeasurements(int traveltime){
 	//std::cout<<"collectMeasurement: "<<echoPin<<std::endl;
-	data[mmCounter] = calcDistance(calcTravelTime());
+	data[this->mmCounter] = calcDistance(traveltime);
 	//std::cout<<" dataCounter: "<<data[mmCounter]<<std::endl;
 	//std::cout<<" mmCounter: "<<mmCounter<<std::endl;
-	
-	if(mmCounter >= MIDDLE - 1){
-		mmCounter = 0;
+	std::cout<<this->data[this->mmCounter]<<" "<<this->mmCounter<<std::endl;
+	if(this->mmCounter >= MIDDLE - 1){
+		this->mmCounter = 0;
 	}else{
-		mmCounter++;
+		this->mmCounter++;
 	}	
 }
 //push midData from all Sensors to global distance Array. 
