@@ -18,7 +18,8 @@ SensorLow::~SensorLow(){
 }
 
 double SensorLow::calcDistance(int travelTime){
-	double distance = cos(SENLOW_ANGLE*M_PI / 180.0) * (travelTime/(double)DIV);;
+	double distance = cos(SENLOW_ANGLE*M_PI / 180.0) * (travelTime/(double)DIV);
+	
 	return distance;
 }
 

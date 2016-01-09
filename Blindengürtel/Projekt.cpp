@@ -94,11 +94,11 @@ void apFunction(AudioPlayer* ap){
 		mtx1.unlock();
 		
 		
-		delayMicroseconds(1000);
+		//delayMicroseconds(1000);
 		//cout<<"soundpath: "<<sound<<endl;
 		if(sound != NO_SOUND){
 			
-			
+			//cout<<"soundpath: "<<sound<<endl;
 			mtx1.lock();
 	
 			ap->calcIntensity(distances[ap->getSoundPair()->soundIndex], MAXDISTANCE);
@@ -107,11 +107,15 @@ void apFunction(AudioPlayer* ap){
 			
 			mtx1.lock();
 			ap->playSound(ap->getSoundPair()->soundPath);
-			
-			//delayMicroseconds(ap->getPause()*1000000);
-			
-			cout<<"sound: "<<sound<<endl;
 			mtx1.unlock();
+			mtx1.lock();
+		cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
+		mtx1.unlock();
+		//cout<<"la"<<endl;
+			//delayMicroseconds(ap->getPause()*1000000);
+			delayMicroseconds(500000);
+			//cout<<"sound: "<<sound<<endl;
+			
 		}
 		
 	}
@@ -121,27 +125,27 @@ void apFunction(AudioPlayer* ap){
 
 int main()
 {
-	/*setup();
+	setup();
 	soundPair* sp = new soundPair;
 	AudioPlayer* ap = new AudioPlayer(1, sp);
 
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
 	SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
-
+    /*
 	int checkMid;
 	int checkLow;
 	int checkUp;
 	int checkAP;
 	*/
-	//sleep(1);
+	sleep(1);
 	//initialize threads
-	//thread t1 (threadbla, senMid);
-	//thread t2 (threadbla, senLow);
-	//thread t3 (threadbla, senUp);
-	//thread t4 (apFunction, ap);
+	thread t1 (threadbla, senMid);
+	thread t2 (threadbla, senLow);
+	thread t3 (threadbla, senUp);
+	thread t4 (apFunction, ap);
 	
-	sf::SoundBuffer buffer;
+	/*sf::SoundBuffer buffer;
 	sf::Sound sound;
 
 		
@@ -160,12 +164,17 @@ int main()
 	sound.stop();
 
 		
-	}
+	}*/
 	//cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
-	//t1.join();
-	//t2.join();
-	//t3.join();
-	//t4.join();
+	while(1){
+		
+		//sleep(2);
+	}
+	t1.join();
+	t2.join();
+	t3.join();
+	t4.join();
+	
 
     return 0;
 }

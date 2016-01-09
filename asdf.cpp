@@ -25,7 +25,7 @@ sf::SoundBuffer buffer;
 	
     sound.play();
 	std::cout<<sound.getStatus()<<std::endl;
-    usleep(500000);
+    usleep(100000);
     sound.stop();
 	std::cout<<sound.getStatus()<<std::endl;
 	//exit(0);

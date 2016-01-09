@@ -16,7 +16,7 @@ AudioPlayer::AudioPlayer(int pause, soundPair* sp)
 void AudioPlayer::playSound(string soundPath){
 	sf::SoundBuffer buffer;
 	sf::Sound sound;
-	cout<<soundPath<<endl;
+	//cout<<soundPath<<endl;
     if (!buffer.loadFromFile(soundPath)){
 		cout<<"error"<<endl;
 	}
@@ -25,7 +25,7 @@ void AudioPlayer::playSound(string soundPath){
 	sound.setBuffer(buffer);
 	sound.play();
 	//cout<<"bla"<<endl;
-	//sleep(2);
+	//sleep(1);
 }
 
 int AudioPlayer::getPause(){

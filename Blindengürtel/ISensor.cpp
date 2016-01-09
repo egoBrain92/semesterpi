@@ -45,7 +45,7 @@ void ISensor::collectMeasurements(){
 //push midData from all Sensors to global distance Array. 
 void ISensor::pushData(double distances[], int sensorNr, double midDistance){
 	distances[sensorNr] = midDistance;	
-	std::cout<<"pushdata: "<<sensorNr<<std::endl;
+	//std::cout<<"pushdata: "<<sensorNr<<std::endl;
 }
 
 double ISensor::calcTravelTime(){

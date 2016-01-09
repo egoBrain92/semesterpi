@@ -3,7 +3,7 @@
 #ifndef AUDIOPLAYER_H_
 #define AUDIOPLAYER_H_
 
-#define NO_SOUND "kurzerTon.wav"
+#define NO_SOUND "NOSOUND"
 #define SOUND_UPPER "HighkurzerTon.wav"
 #define SOUND_MID "MidkurzerTon.wav"
 #define SOUND_LOWER "LowKurzerTon.wav"
