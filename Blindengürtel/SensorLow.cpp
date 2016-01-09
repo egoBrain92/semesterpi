@@ -18,9 +18,7 @@ SensorLow::~SensorLow(){
 }
 
 double SensorLow::calcDistance(int travelTime){
-	//double distance = cos(SENLOW_ANGLE*M_PI / 180.0) * (travelTime/(double)DIV);
-	double distance = -1;
-	distance = travelTime / DIV;
+	double distance = cos(SENLOW_ANGLE*M_PI / 180.0) * (travelTime/(double)DIV);
 	//std::cout<<"distance calc: "<<distance<<" senID: "<<getId()<<std::endl;
 	return distance;
 }

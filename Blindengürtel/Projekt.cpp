@@ -12,6 +12,12 @@
 #include <mutex>
 #include <SFML/Audio.hpp>
 
+#define NO_SOUND "NOSOUND"
+#define SOUND_UPPER "HighkurzerTon.wav"
+#define SOUND_MID "MidkurzerTon.wav"
+#define SOUND_LOWER "LowKurzerTon.wav"
+#define ERROR_SOUND "ErrorkurzerTon.wav"
+
 #define NUMBER_OF_SENSORS 3
 #define INIT_ARRAY_VAL 999999
 #define ECHO_PIN_SUP	15
@@ -37,6 +43,10 @@ mutex mtx3;
 		2 : Sensor down
 		*/
 double distances[NUMBER_OF_SENSORS]= {INIT_ARRAY_VAL, INIT_ARRAY_VAL ,INIT_ARRAY_VAL};
+double intensity;	
+string soundPath;
+
+
 
 void setup() {
         wiringPiSetup();
@@ -120,7 +130,19 @@ void apFunction(AudioPlayer* ap){
 		
 	}
 }
-
+void myFunction(){
+	sf::SoundBuffer sb;
+	sf::SoundBuffer sb2;
+	sf::SoundBuffer sb3;
+	sf::Sound sound;
+	
+	sb.loadFromFile("HighkurzerTon.wav");
+	sound.setBuffer(sb);
+	while(1){
+		sound.play();
+		usleep(intensity * 1000000);
+	}
+}
 
 
 int main()
@@ -130,16 +152,29 @@ int main()
 	long travelTimeLow;
 	long travelTimeMid;
 	
+	int soundIndex;
+	int i;
+	int distance;
+	
 	bool checkMid;
 	bool checkUp;
 	bool checkLow;
 	soundPair* sp = new soundPair;
 	AudioPlayer* ap = new AudioPlayer(1, sp);
+	//string sound;
+	
+	//thread t4;
 	
 
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
 	SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
+	
+	thread t4(myFunction);
+	t4.detach();
+	
+	
+	
 	
 	while(1){
 		checkMid = false;
@@ -147,11 +182,11 @@ int main()
 		checkLow = false;
 		
 		senLow->initiateMeasurement();
-		usleep(500);
+		//usleep(500);
 		senUp->initiateMeasurement();
-		usleep(500);
+		//usleep(500);
 		senMid->initiateMeasurement();
-		usleep(500);
+		usleep(400);
 		
 	//	cout<<"bla"<<endl;
 		while(digitalRead(senMid->getEchoPin()) == LOW && digitalRead(senUp->getEchoPin()) == LOW && digitalRead(senLow->getEchoPin()) == LOW){
@@ -188,9 +223,51 @@ int main()
 		senMid->pushData(distances, senMid->getId(), senMid->calcMidValue());
 		senUp->pushData(distances, senUp->getId(), senUp->calcMidValue());
 		senLow->pushData(distances, senLow->getId(), senLow->calcMidValue());
+	
 		
-		usleep(50000);
+		usleep(100000);
 		
+	
+	soundIndex = -1;
+	distance = 150;
+
+	for(i = 0; i < 3; i++){ //sizeof(distances/sizeof(&distances[0])
+		//cout<<"distance["<<i<<"]"<<sizeof(distances)/sizeof(distances[0])<<endl;
+		if(distances[i] <= distance){
+			distance = distances[i];
+			soundIndex = i;
+		}
+	}
+	mtx1.lock();
+	switch(soundIndex){
+		case -1:
+			soundPath = NO_SOUND;
+			break;		
+		case 0:
+			soundPath = SOUND_UPPER;
+			break;
+		case 1:
+			soundPath = SOUND_MID;
+			break;
+		case 2:
+			soundPath = SOUND_LOWER;
+			break;
+		default: 
+			soundPath = ERROR_SOUND;
+			break;
+	}
+	mtx1.unlock();
+	
+	mtx2.lock();
+	intensity = distances[soundIndex]/150;
+	mtx2.unlock();
+			
+			
+			
+	
+		
+		/*sound.setBuffer(sb);
+		sound.play();*/
 		cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
 	}
 	
@@ -232,9 +309,10 @@ int main()
 	/*t1.join();
 	t2.join();
 	t3.join();
+	*/ 
 	t4.join();
-	*/
-
+	
+	
     return 0;
 }
 
