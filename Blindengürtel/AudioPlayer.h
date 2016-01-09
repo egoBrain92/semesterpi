@@ -21,7 +21,7 @@ class AudioPlayer {
 		AudioPlayer(int, soundPair*);
 		void playSound(std::string);
 		soundPair* chooseSound(double[], int);
-		double calcIntensity(double, int);
+		void calcIntensity(double, int);
 		void setPause(int);
 		int getPause(void);
 		soundPair* getSoundPair(void);

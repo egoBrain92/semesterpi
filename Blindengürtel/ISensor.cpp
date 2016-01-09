@@ -54,12 +54,12 @@ double ISensor::calcTravelTime(){
 		//std::cout<<"calcTravelTime: "<<echoPin<<std::endl;
 		//std::cout<<"calc PIN: "<<this->echoPin<<std::endl;
 		while(digitalRead(this->echoPin) == LOW);
-
+		delayMicroseconds(5);
 		long startTime = micros();
 		
 		//Wait for echo end
 		while(digitalRead(this->echoPin) == HIGH);
-
+		delayMicroseconds(5);
 		//calculate travetime
 		long travelTime = micros() - startTime;
 		

@@ -1,16 +1,19 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
-#include <pthread.h>
+//#include <pthread.h>
 #include <cstdlib>
 #include <wiringPi.h>
 #include "SensorMid.h"
 #include "SensorUp.h"
 #include "SensorLow.h"
 #include "AudioPlayer.h"
+#include <thread>
+#include <mutex>
+#include <SFML/Audio.hpp>
 
 #define NUMBER_OF_SENSORS 3
-
+#define INIT_ARRAY_VAL 999999
 #define ECHO_PIN_SUP	15
 #define TRIG_PIN_SUP	16
 
@@ -20,20 +23,20 @@
 #define ECHO_PIN_SMID	5
 #define TRIG_PIN_SMID	6
 
-
-
-pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mut2 = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mut3 = PTHREAD_MUTEX_INITIALIZER;
-
 using namespace std;
+
+
+
+mutex mtx1;
+mutex mtx2;
+mutex mtx3;
 
 		/*distances of all Sensors
 		0 : Sensor Up
 		1 : Sensor Mid
 		2 : Sensor down
 		*/
-double distances[NUMBER_OF_SENSORS];
+double distances[NUMBER_OF_SENSORS]= {INIT_ARRAY_VAL, INIT_ARRAY_VAL ,INIT_ARRAY_VAL};
 
 void setup() {
         wiringPiSetup();
@@ -54,57 +57,71 @@ void setup() {
 }
 
 //thread function: same function for different threads, just differs in parameter (polymorphy)
-void* thread(void* sensor){
-	ISensor* mySen = (ISensor*) sensor;
+void threadbla(ISensor* mySen){
+	
 
 	while(1){
 		
-		//cout<<"newThread"<<endl;
-		pthread_mutex_lock(&mut2);
+		
+		
+		mtx2.lock();
 		mySen->collectMeasurements();
-		pthread_mutex_unlock(&mut2);
+		mtx2.unlock();
 		
-		pthread_mutex_lock(&mut3);
+		
+		
+		mtx3.lock();
 		usleep(50000);
-		pthread_mutex_unlock(&mut3);
+		mtx3.unlock();
 		
-		pthread_mutex_lock(&mut);
+		
+		
+		mtx1.lock();
 		mySen->pushData(distances, mySen->getId(), mySen->calcMidValue());
-		pthread_mutex_unlock(&mut);
-		//sleep(2);
+		mtx1.unlock();
+		
 	}
 }
 
 
-
-
-void* apFunction(void* audioPlayer){
+void apFunction(AudioPlayer* ap){
 	string sound;
-	AudioPlayer* ap = (AudioPlayer*) audioPlayer;
 	while(1){
 
-		pthread_mutex_lock(&mut);
+		
+		mtx1.lock();
 		sound = ap->chooseSound(distances, NUMBER_OF_SENSORS)->soundPath;
-		pthread_mutex_unlock(&mut);
+		mtx1.unlock();
+		
+		
 		delayMicroseconds(1000);
 		//cout<<"soundpath: "<<sound<<endl;
 		if(sound != NO_SOUND){
-
-			pthread_mutex_lock(&mut);
-			ap->setPause(ap->calcIntensity(distances[ap->getSoundPair()->soundIndex], MAXDISTANCE));
-			pthread_mutex_unlock(&mut);
-
+			
+			
+			mtx1.lock();
+	
+			ap->calcIntensity(distances[ap->getSoundPair()->soundIndex], MAXDISTANCE);
+			
+			mtx1.unlock();
+			
+			mtx1.lock();
 			ap->playSound(ap->getSoundPair()->soundPath);
-
+			
 			//delayMicroseconds(ap->getPause()*1000000);
+			
 			cout<<"sound: "<<sound<<endl;
+			mtx1.unlock();
 		}
+		
 	}
 }
 
+
+
 int main()
 {
-	setup();
+	/*setup();
 	soundPair* sp = new soundPair;
 	AudioPlayer* ap = new AudioPlayer(1, sp);
 
@@ -116,43 +133,39 @@ int main()
 	int checkLow;
 	int checkUp;
 	int checkAP;
-
+	*/
+	//sleep(1);
 	//initialize threads
-	pthread_t t1;
-	pthread_t t2;
-	pthread_t t3;
-	pthread_t audioThread;
-
-	//create first thread for middle sensor
-	checkMid = pthread_create(&t1, NULL, thread, (void*)senMid);
-	if(checkMid){
-		cout<<"unable to create thread"<<endl;
-		exit(-1);
-	}
-
-	//create second thread for upper sensor
-	checkUp = pthread_create(&t2, NULL, thread, (void*)senUp);
-	if(checkUp){
-		cout<<"unable to create thread"<<endl;
-		exit(-1);
-	}
-
-	checkLow = pthread_create(&t3, NULL, thread, (void*)senLow);
-		if(checkLow){
-			cout<<"unable to create thread"<<endl;
-			exit(-1);
-		}
+	//thread t1 (threadbla, senMid);
+	//thread t2 (threadbla, senLow);
+	//thread t3 (threadbla, senUp);
+	//thread t4 (apFunction, ap);
 	
-	checkAP = pthread_create(&audioThread, NULL, apFunction, (void*)ap);
-		if(checkAP){
-			cout<<"unable to create thread"<<endl;
-			exit(-1);
-	}
-	while(1){
-		cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
+	sf::SoundBuffer buffer;
+	sf::Sound sound;
+
 		
-		sleep(1);
+	if (!buffer.loadFromFile("HighkurzerTon.wav")){
+		cout<<"error"<<endl;
 	}
+
+	sound.setBuffer(buffer);
+
+	
+	while(1){
+
+	//sound.setLoop(true);
+	sound.play();
+	sleep(1);
+	sound.stop();
+
+		
+	}
+	//cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
+	//t1.join();
+	//t2.join();
+	//t3.join();
+	//t4.join();
 
     return 0;
 }

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <unistd.h>
+#include <SFML/Audio.hpp>
+
 
 
 using namespace std;
@@ -12,9 +14,18 @@ AudioPlayer::AudioPlayer(int pause, soundPair* sp)
 :pause(pause), sound(sp){}
 
 void AudioPlayer::playSound(string soundPath){
-	sleep(this->getPause());
-	string sound = string("aplay ")+ soundPath;
-	system(sound.c_str());
+	sf::SoundBuffer buffer;
+	sf::Sound sound;
+	cout<<soundPath<<endl;
+    if (!buffer.loadFromFile(soundPath)){
+		cout<<"error"<<endl;
+	}
+        //return -1;
+
+	sound.setBuffer(buffer);
+	sound.play();
+	//cout<<"bla"<<endl;
+	//sleep(2);
 }
 
 int AudioPlayer::getPause(){
@@ -63,10 +74,12 @@ soundPair* AudioPlayer::chooseSound(double distances[], int arraySize){
 	return this->sound;
 }
 
-double AudioPlayer::calcIntensity(double distance, int maxRange){
+void AudioPlayer::calcIntensity(double distance, int maxRange){
+	
 	double intensity;
 	intensity = distance/maxRange;
-	return intensity;
+	setPause(intensity);
+	//return intensity;
 }
 
 
