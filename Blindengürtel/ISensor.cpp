@@ -29,50 +29,23 @@ double ISensor::calcMidValue(){
 	
 	return midValue; 
 }
+
 //put measurements in right position in array 
 void ISensor::collectMeasurements(int traveltime){
-	//std::cout<<"collectMeasurement: "<<echoPin<<std::endl;
 	data[this->mmCounter] = calcDistance(traveltime);
-	//std::cout<<" dataCounter: "<<data[mmCounter]<<std::endl;
-	//std::cout<<" mmCounter: "<<mmCounter<<std::endl;
-	std::cout<<this->data[this->mmCounter]<<" "<<this->mmCounter<<std::endl;
 	if(this->mmCounter >= MIDDLE - 1){
 		this->mmCounter = 0;
 	}else{
 		this->mmCounter++;
 	}	
 }
-//push midData from all Sensors to global distance Array. 
+//push middled Data of all Sensors to global distance array
 void ISensor::pushData(double distances[], int sensorNr, double midDistance){
 	distances[sensorNr] = midDistance;	
-	//std::cout<<"pushdata: "<<sensorNr<<std::endl;
 }
 
-double ISensor::calcTravelTime(){
-	//Wait for echo start
-		initiateMeasurement();
-		//std::cout<<"calcTravelTime: "<<echoPin<<std::endl;
-		//std::cout<<"calc PIN: "<<this->echoPin<<std::endl;
-		while(digitalRead(this->echoPin) == LOW);
-		delayMicroseconds(5);
-		long startTime = micros();
-		
-		//Wait for echo end
-		while(digitalRead(this->echoPin) == HIGH);
-		delayMicroseconds(5);
-		//calculate travetime
-		long travelTime = micros() - startTime;
-		
-		//double travelTime = rand() % 25000;
-		//usleep(50000);
-		return travelTime;
-}
-
-void ISensor::initiateMeasurement(){
-	//std::cout<<"this->trig"<<this->trigPin<<std::endl;
-	//std::cout<<"this->echo"<<this->echoPin<<std::endl;
-        
-        
+//make the sensor send an ultrasonic impuls for starting the measurement
+void ISensor::initiateMeasurement(){    
         digitalWrite(this->trigPin, LOW);
         delayMicroseconds(5);
         digitalWrite(this->trigPin, HIGH);

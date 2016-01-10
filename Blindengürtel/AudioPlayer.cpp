@@ -46,8 +46,7 @@ soundPair* AudioPlayer::chooseSound(double distances[], int arraySize){
 	int distance = MAXDISTANCE;
 	this->sound->soundIndex = -1;
 
-	for(i = 0; i < arraySize; i++){ //sizeof(distances/sizeof(&distances[0])
-		//cout<<"distance["<<i<<"]"<<sizeof(distances)/sizeof(distances[0])<<endl;
+	for(i = 0; i < arraySize; i++){ 
 		if(distances[i] <= distance){
 			distance = distances[i];
 			this->sound->soundIndex = i;
