@@ -8,22 +8,18 @@ ISensor::ISensor(int ePin, int tPin, int sensId)
 : echoPin(ePin), trigPin(tPin), id(sensId){
 
 	this->mmCounter=0;
-	std::cout<<"id: "<<id<<" data: "<<&data<<std::endl;
-	std::cout<<"id: "<<this->id<<" data: "<<&(this->data)<<std::endl;
+	this->data[MIDDLE] = {0, 0, 0};
 }
 
 ISensor::~ISensor(){}
 
-double* ISensor::getData(){
-	return data;
-}
-
 //middle the measurements
 double ISensor::calcMidValue(){
-	double midValue = 0;
 	int i;
+	double midValue = 0;
+
 	for(i = 0; i< MIDDLE;i++){
-		midValue += data[i];
+		midValue += this->data[i];
 	}
 	midValue = midValue/MIDDLE;			
 	
@@ -39,9 +35,10 @@ void ISensor::collectMeasurements(int traveltime){
 		this->mmCounter++;
 	}	
 }
+
 //push middled Data of all Sensors to global distance array
-void ISensor::pushData(double distances[], int sensorNr, double midDistance){
-	distances[sensorNr] = midDistance;	
+void ISensor::pushData(double distances[]){
+	distances[this->id] = calcMidValue();
 }
 
 //make the sensor send an ultrasonic impuls for starting the measurement
@@ -60,6 +57,7 @@ int ISensor::getEchoPin(){
 int ISensor::getTrigPin(){
 	return this->trigPin;
 }
+
 int ISensor::getId(){
 	return this->id;
 }

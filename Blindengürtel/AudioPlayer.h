@@ -12,21 +12,18 @@
 #define MAXDISTANCE 150
 
 typedef struct soundPair {
-	int soundIndex = -1;
+	int soundIndex;
 	std::string soundPath;
 } soundPair;
 
 class AudioPlayer {
 	public:
-		AudioPlayer(int, soundPair*);
-		void playSound(std::string);
-		soundPair* chooseSound(double[], int);
-		void calcIntensity(double, int);
+		AudioPlayer(soundPair*);
+		void playSound(void);
+		int chooseSoundindex(double[], int);
+		std::string AudioPlayer::chooseSoundPath(void);
 		void setPause(int);
 		int getPause(void);
-		soundPair* getSoundPair(void);
-
-
 	
 	private:
 		int pause;

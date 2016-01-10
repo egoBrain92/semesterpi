@@ -10,76 +10,75 @@
 
 using namespace std;
 
-AudioPlayer::AudioPlayer(int pause, soundPair* sp)
-:pause(pause), sound(sp){}
+AudioPlayer::AudioPlayer(soundPair* sp)
+:sound(sp){
+	sound->soundIndex= -1;
+	sound->soundPath = NO_SOUND;
+	this->pause = 1;
+}
 
-void AudioPlayer::playSound(string soundPath){
-	sf::SoundBuffer buffer;
-	sf::Sound sound;
-	//cout<<soundPath<<endl;
-    if (!buffer.loadFromFile(soundPath)){
-		cout<<"error"<<endl;
+int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
+	int i;
+	int distance;
+
+	this->sound->soundIndex = -1;
+	distance = MAXDISTANCE;
+
+	for(i = 0; i < amountSen; i++){
+		if(distances[i] <= distance){
+			distance = distances[i];
+			this->sound->soundIndex = i;
+		}
 	}
-        //return -1;
+	return this->sound->soundIndex;
+}
 
-	sound.setBuffer(buffer);
-	sound.play();
-	//cout<<"bla"<<endl;
-	//sleep(1);
+void AudioPlayer::playSound(){
+	if(this->sound->soundPath == SOUND_UPPER){
+		sound.setBuffer(sb1);
+		sound.play();
+	}
+
+	if(this->sound->soundPath == SOUND_LOWER){
+		sound.setBuffer(sb2);
+		sound.play();
+	}
+
+	if(this->sound->soundPath == SOUND_MID){
+		sound.setBuffer(sb3);
+		sound.play();
+	}
 }
 
 int AudioPlayer::getPause(){
 	return this->pause;
 }
 
-soundPair* AudioPlayer::getSoundPair(){
-	return this->sound;
-}
-
-
 void AudioPlayer::setPause(int newPause){
 	this->pause = newPause;
 }
 
-soundPair* AudioPlayer::chooseSound(double distances[], int arraySize){
-	int i;
-	int distance = MAXDISTANCE;
-	this->sound->soundIndex = -1;
-
-	for(i = 0; i < arraySize; i++){ 
-		if(distances[i] <= distance){
-			distance = distances[i];
-			this->sound->soundIndex = i;
-		}
-	}
+string AudioPlayer::chooseSoundPath(){
 	switch(this->sound->soundIndex){
-		case -1:
-			this->sound->soundPath = NO_SOUND;
-			break;		
-		case 0:
-			this->sound->soundPath = SOUND_UPPER;
-			break;
-		case 1:
-			this->sound->soundPath = SOUND_MID;
-			break;
-		case 2:
-			this->sound->soundPath = SOUND_LOWER;
-			break;
-		default: 
-			this->sound->soundPath = ERROR_SOUND;
-			this->sound->soundIndex = -2;
-			break;
-	}
-	return this->sound;
+			case -1:
+				this->sound->soundPath = NO_SOUND;
+				break;
+			case 0:
+				this->sound->soundPath = SOUND_UPPER;
+				break;
+			case 1:
+				this->sound->soundPath = SOUND_MID;
+				break;
+			case 2:
+				this->sound->soundPath = SOUND_LOWER;
+				break;
+			default:
+				this->sound->soundPath = ERROR_SOUND;
+				break;
+		}
+	return this->sound->soundPath;
 }
 
-void AudioPlayer::calcIntensity(double distance, int maxRange){
-	
-	double intensity;
-	intensity = distance/maxRange;
-	setPause(intensity);
-	//return intensity;
-}
 
 
 

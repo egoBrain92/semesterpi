@@ -13,16 +13,11 @@
 #include <SFML/Audio.hpp>
 #include <cmath>
 
-#define NO_SOUND "NOSOUND"
-#define SOUND_UPPER "sound3.wav"
-#define SOUND_MID "sound4.wav"
-#define SOUND_LOWER "LowKurzerTon.wav"
-#define ERROR_SOUND "ErrorkurzerTon.wav"
 #define SENSOR_BAD_READ 40000
 
-
 #define NUMBER_OF_SENSORS 3
-#define INIT_ARRAY_VAL 999999
+#define INIT_ARRAY_VAL 151
+
 #define ECHO_PIN_SUP	15
 #define TRIG_PIN_SUP	16
 
@@ -38,15 +33,14 @@ using namespace std;
 
 mutex mtx1;
 mutex mtx2;
+
 		/*distances of all Sensors
 		0 : Sensor Up
 		1 : Sensor Mid
 		2 : Sensor down
 		*/
-		
 double distances[NUMBER_OF_SENSORS]= {INIT_ARRAY_VAL, INIT_ARRAY_VAL ,INIT_ARRAY_VAL};
 double intensity;	
-string soundPath;
 
 void setup() {
         wiringPiSetup();
@@ -64,12 +58,11 @@ void setup() {
         digitalWrite(TRIG_PIN_SMID, LOW);
 }
 
-void myFunction(){
+void audioFunction(AudioPlayer* ap){
 	sf::SoundBuffer sb1;
 	sf::SoundBuffer sb2;
 	sf::SoundBuffer sb3;
 	sf::Sound sound;
-	double sleepTimer;
 	
 	sb1.loadFromFile(SOUND_UPPER);
 	sb2.loadFromFile(SOUND_LOWER);
@@ -77,25 +70,15 @@ void myFunction(){
 	
 	
 	while(1){
-		if(soundPath == SOUND_UPPER){
-			sound.setBuffer(sb1);
-			sound.play();
-		}
-		
-		if(soundPath == SOUND_LOWER){
-			sound.setBuffer(sb2);
-			sound.play();
-		}
-		
-		if(soundPath == SOUND_MID){
-			sound.setBuffer(sb3);
-			sound.play();
-		}
+		mtx1.lock();
+		ap->playSound(sound, sb1, sb2, sb3);
+		mtx1.unlock();
+
 		mtx2.lock();
-		sleepTimer = intensity;
+		ap->setPause(intensity * 1000000);
 		mtx2.unlock();
-		
-		usleep(sleepTimer * 1000000);
+
+		usleep(ap->getPause());
 	}
 }
 
@@ -120,15 +103,20 @@ int main()
 	int loop2Protector1;
 	int loop2Protector2;
 
+	soundPair* sp;
+
+	//create different sensors
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
 	SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
 	
-	thread audioThread(myFunction);
+	AudioPlayer* ap = new AudioPlayer(sp);
+
+	//create thread to play acustic signals
+	thread audioThread(audioFunction, ap);
 	audioThread.detach();
 	
 	while(1){
-		//cout<<"micros(): "<<micros()<<endl;
 		checkMid = false;
 		checkUp = false;
 		checkLow = false;
@@ -146,7 +134,7 @@ int main()
 			loop1Protector2 = abs(micros() - loop1Protector1);
 			if(loop1Protector2 > SENSOR_BAD_READ){
 				cout<<"1 : "<<loop1Protector2<<endl;
-				break; //break from the loop if the senesor did not react properly
+				break; //break from the loop if the sensor did not react properly
 			}
 			//cout<<"1 : "<<loop1Protector2<<endl;
 		}
@@ -184,47 +172,23 @@ int main()
 		senLow->collectMeasurements(travelTimeLow);
 		
 		//push middled data of each sensor 
-		senMid->pushData(distances, senMid->getId(), senMid->calcMidValue());
-		senUp->pushData(distances, senUp->getId(), senUp->calcMidValue());
-		senLow->pushData(distances, senLow->getId(), senLow->calcMidValue());
+		senMid->pushData(distances);
+		senUp->pushData(distances);
+		senLow->pushData(distances);
 	
-		usleep(50000); //break between measurements ~20 Measurements per secound
+		usleep(50000); //break between measurements ~20 measurements per second
 		
+		soundIndex = ap->chooseSoundindex(distances, NUMBER_OF_SENSORS);
 	
-	soundIndex = -1;
-	distance = MAXDISTANCE;
+		mtx1.lock();
+		ap->chooseSoundPath();
+		mtx1.unlock();
 
-	for(i = 0; i < NUMBER_OF_SENSORS; i++){
-		if(distances[i] <= distance){
-			distance = distances[i];
-			soundIndex = i;
+		if(ap->getSoundPair()->soundIndex != -1){
+			mtx2.lock();
+			intensity = distances[soundIndex]/MAXDISTANCE;
+			mtx2.unlock();
 		}
-	}
-	mtx1.lock();
-	switch(soundIndex){
-		case -1:
-			soundPath = NO_SOUND;
-			break;		
-		case 0:
-			soundPath = SOUND_UPPER;
-			break;
-		case 1:
-			soundPath = SOUND_MID;
-			break;
-		case 2:
-			soundPath = SOUND_LOWER;
-			break;
-		default: 
-			soundPath = ERROR_SOUND;
-			break;
-	}
-	mtx1.unlock();
-	
-	if(soundIndex != -1){
-		mtx2.lock();
-		intensity = distances[soundIndex]/MAXDISTANCE;
-		mtx2.unlock();
-	}		
 	
 		//cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
 	}
