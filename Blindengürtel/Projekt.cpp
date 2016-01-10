@@ -11,12 +11,14 @@
 #include <thread>
 #include <mutex>
 #include <SFML/Audio.hpp>
+#include <cmath>
 
 #define NO_SOUND "NOSOUND"
 #define SOUND_UPPER "sound3.wav"
 #define SOUND_MID "sound4.wav"
 #define SOUND_LOWER "LowKurzerTon.wav"
 #define ERROR_SOUND "ErrorkurzerTon.wav"
+#define SENSOR_BAD_READ 40000
 
 
 #define NUMBER_OF_SENSORS 3
@@ -73,6 +75,7 @@ void myFunction(){
 	sb2.loadFromFile(SOUND_LOWER);
 	sb3.loadFromFile(SOUND_MID);
 	
+	
 	while(1){
 		if(soundPath == SOUND_UPPER){
 			sound.setBuffer(sb1);
@@ -110,6 +113,12 @@ int main()
 	bool checkMid;
 	bool checkUp;
 	bool checkLow;
+	
+	int loop1Protector1;
+	int loop1Protector2;
+
+	int loop2Protector1;
+	int loop2Protector2;
 
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
@@ -119,6 +128,7 @@ int main()
 	audioThread.detach();
 	
 	while(1){
+		//cout<<"micros(): "<<micros()<<endl;
 		checkMid = false;
 		checkUp = false;
 		checkLow = false;
@@ -127,24 +137,44 @@ int main()
 		senUp->initiateMeasurement();
 		senMid->initiateMeasurement();
 		
-		usleep(400);
+		usleep(400); //wait for Sensor to react
 		
-		while(digitalRead(senMid->getEchoPin()) == LOW && digitalRead(senUp->getEchoPin()) == LOW && digitalRead(senLow->getEchoPin()) == LOW);
+		loop1Protector1 = micros();
+		loop1Protector2 = 0;
+		
+		while(digitalRead(senMid->getEchoPin()) == LOW && digitalRead(senUp->getEchoPin()) == LOW && digitalRead(senLow->getEchoPin()) == LOW){
+			loop1Protector2 = abs(micros() - loop1Protector1);
+			if(loop1Protector2 > SENSOR_BAD_READ){
+				cout<<"1 : "<<loop1Protector2<<endl;
+				break; //break from the loop if the senesor did not react properly
+			}
+			//cout<<"1 : "<<loop1Protector2<<endl;
+		}
 		
 		long startTime = micros();
 		
-		while(digitalRead(senMid->getEchoPin()) == HIGH || digitalRead(senUp->getEchoPin()) == HIGH || digitalRead(senLow->getEchoPin()) == HIGH){
+		loop2Protector1 = micros();
+		loop2Protector2 = 0;
 		
+		while(digitalRead(senMid->getEchoPin()) == HIGH || digitalRead(senUp->getEchoPin()) == HIGH || digitalRead(senLow->getEchoPin()) == HIGH){
+			
+			loop2Protector2 = abs(micros() - loop2Protector1);
+			//cout<<"2 : "<<loop2Protector2<<endl;
+			if(loop2Protector2 > SENSOR_BAD_READ){
+				cout<<"2 : "<<loop2Protector2<<endl;
+				break; //break from the loop if the senesor did not react properly
+			}
+			//usleep(50);
 			if(digitalRead(senMid->getEchoPin()) == LOW && checkMid == false){
-				travelTimeMid = micros() - startTime;
+				travelTimeMid = abs(micros() - startTime);
 				checkMid = true;
 			}
 			if(digitalRead(senUp->getEchoPin()) == LOW && checkUp == false){
-				travelTimeUp = micros() - startTime;
+				travelTimeUp = abs(micros() - startTime);
 				checkUp = true;
 			}
 			if(digitalRead(senLow->getEchoPin()) == LOW && checkLow == false){
-				travelTimeLow = micros() - startTime;
+				travelTimeLow = (micros() - startTime);
 				checkLow = true;
 			}		
 		}
@@ -158,7 +188,7 @@ int main()
 		senUp->pushData(distances, senUp->getId(), senUp->calcMidValue());
 		senLow->pushData(distances, senLow->getId(), senLow->calcMidValue());
 	
-		usleep(50000); //break between measurements 
+		usleep(50000); //break between measurements ~20 Measurements per secound
 		
 	
 	soundIndex = -1;
@@ -196,7 +226,7 @@ int main()
 		mtx2.unlock();
 	}		
 	
-		cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
+		//cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
 	}
 	
 	audioThread.join();
