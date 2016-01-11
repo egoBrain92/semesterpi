@@ -35,6 +35,10 @@ AudioPlayer::~AudioPlayer(){
 	delete sound;
 }
 
+///chooses the soundIndex for the latest measurement
+///@param distances is the array with the latest middeled measurement 
+///@param the number of sensor which take measurements 
+///@return returns the soundIndex which should be played 
 int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
 	int i;
 	int distance;
@@ -51,6 +55,7 @@ int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
 	return this->sound->soundIndex;
 }
 
+///palys the sound that is specified by soundPath
 void AudioPlayer::playSound(){
 	if(this->sound->soundPath == SOUND_UPPER){
 		player.setBuffer(sb1);
@@ -68,14 +73,8 @@ void AudioPlayer::playSound(){
 	}
 }
 
-int AudioPlayer::getPause(){
-	return this->pause;
-}
-
-void AudioPlayer::setPause(int newPause){
-	this->pause = newPause;
-}
-
+///chooses the soundPath that should be played for the latest measurement
+///@returns returns the soundPath to the file which should be played
 string AudioPlayer::chooseSoundPath(){
 	switch(this->sound->soundIndex){
 			case -1:
@@ -97,6 +96,17 @@ string AudioPlayer::chooseSoundPath(){
 	return this->sound->soundPath;
 }
 
+///@return returns the duration of the silence in between two sound output
+int AudioPlayer::getPause(){
+	return this->pause;
+}
+
+///set the duration of the silence in between two sound output
+void AudioPlayer::setPause(int newPause){
+	this->pause = newPause;
+}
+
+///@return returns the soundPair which includes the soundPath and soundIndex
 soundPair* AudioPlayer::getSoundPair(){
 	return this->sound;
 }

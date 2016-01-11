@@ -28,18 +28,15 @@ class AudioPlayer {
 		int getPause(void);
 		soundPair* getSoundPair(void);
 	
-	private:
-	
-		///the duration of the silence in between two sound output
+	private:		
 		int pause;
-		///allows us to play which get loaded with the SoundBuffer
+		
 		soundPair* sound;
 		
 		sf::Sound player;
 		sf::SoundBuffer sb1;
 		sf::SoundBuffer sb2;
 		sf::SoundBuffer sb3;
-		
 };
 
 #endif
