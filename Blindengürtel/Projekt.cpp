@@ -13,6 +13,7 @@
 #include <cmath>
 
 #define SENSOR_BAD_READ 40000
+#define WAIT_FOR_SENESOR 400
 
 #define NUMBER_OF_SENSORS 3
 #define INIT_ARRAY_VAL 151
@@ -31,11 +32,12 @@ using namespace std;
 mutex mtx1;
 mutex mtx2;
 
-		/*distances of all Sensors
-		0 : Sensor Up
-		1 : Sensor Mid
-		2 : Sensor down
-		*/
+	/*distances of all Sensors
+	0 : Sensor Up
+	1 : Sensor Mid
+	2 : Sensor down
+	*/
+	
 double distances[NUMBER_OF_SENSORS]= {INIT_ARRAY_VAL, INIT_ARRAY_VAL ,INIT_ARRAY_VAL};
 double intensity;	
 
@@ -70,6 +72,15 @@ void audioFunction(AudioPlayer* ap){
 	}
 }
 
+void initiateSensors(void){
+	
+		senLow->initiateMeasurement();
+		senUp->initiateMeasurement();
+		senMid->initiateMeasurement();
+		
+		usleep(WAIT_FOR_SENESOR); //wait for Sensor to react
+}
+
 int main()
 {
 	setup();
@@ -90,11 +101,33 @@ int main()
 	int loop2Protector2;
 
 	//create different sensors
-	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
-	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
-	SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
+	try{
+		SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
+	}catch(bad_alloc&){
+		cout<<"failed to create SensorMid the system will reboot now."<<endl;
+		system("sudo reboot");
+	}
 	
-	AudioPlayer* ap = new AudioPlayer();
+	try{
+		SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
+	}catch(bad_alloc&){
+		cout<<"failed to create SensorUp the system will reboot now."<<endl;
+		system("sudo reboot");
+	}
+	
+	try{
+		SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
+	}catch(bad_alloc&){
+		cout<<"failed to create SensorLow the system will reboot now."<<endl;
+		system("sudo reboot");
+	}
+	
+	try{
+		AudioPlayer* ap = new AudioPlayer();
+	}catch(bad_alloc&){
+		cout<<"failed to create AudioPlayer the system will reboot now."<<endl;
+		system("sudo reboot");
+	}
 
 	//create thread to play acustic signals
 	thread audioThread(audioFunction, ap);
@@ -104,12 +137,6 @@ int main()
 		checkMid = false;
 		checkUp = false;
 		checkLow = false;
-		
-		senLow->initiateMeasurement();
-		senUp->initiateMeasurement();
-		senMid->initiateMeasurement();
-		
-		usleep(400); //wait for Sensor to react
 		
 		loop1Protector1 = micros();
 		loop1Protector2 = 0;
@@ -178,6 +205,9 @@ int main()
 	}
 	
 	audioThread.join();
+	
+	cout<<"fatal error the system will reboot now."<<endl;
+	system("sudo reboot");
 	
     return 0;
 }

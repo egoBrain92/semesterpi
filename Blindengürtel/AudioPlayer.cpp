@@ -9,7 +9,14 @@ using namespace std;
 
 AudioPlayer::AudioPlayer(){
 	this->pause = 1;
-	sound = new soundPair();
+	
+	try{
+		sound = new soundPair();
+	}catch(bad_alloc&){
+		cout<<"failed to create soundPair the system will reboot now."<<endl;
+		system("sudo reboot");
+	}
+	
 	if (!sb1.loadFromFile(SOUND_UPPER)){
 		cout<<"failed to load SOUND_MID the system will reboot now."<<endl;
 		system("sudo reboot");
