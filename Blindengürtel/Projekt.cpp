@@ -14,7 +14,7 @@
 
 #define SENSOR_BAD_READ 40000
 #define WAIT_FOR_SENESOR 400
-
+#define ONE_SECOUND 1000000
 #define NUMBER_OF_SENSORS 3
 #define INIT_ARRAY_VAL 151
 
@@ -65,7 +65,7 @@ void audioFunction(AudioPlayer* ap){
 		mtx1.unlock();
 
 		mtx2.lock();
-		ap->setPause(intensity * 1000000);
+		ap->setPause(intensity * ONE_SECOUND);
 		mtx2.unlock();
 
 		usleep(ap->getPause());
@@ -145,7 +145,10 @@ int main()
 		loop1Protector1 = micros();
 		loop1Protector2 = 0;
 		
-		while(digitalRead(senMid->getEchoPin()) == LOW && digitalRead(senUp->getEchoPin()) == LOW && digitalRead(senLow->getEchoPin()) == LOW){
+		while(digitalRead(senMid->getEchoPin()) == LOW && 
+			  digitalRead(senUp->getEchoPin()) == LOW && 
+			  digitalRead(senLow->getEchoPin()) == LOW){
+				  
 			loop1Protector2 = abs(micros() - loop1Protector1);
 			if(loop1Protector2 > SENSOR_BAD_READ){
 				cout<<"1 : "<<loop1Protector2<<endl;
@@ -159,7 +162,9 @@ int main()
 		loop2Protector1 = micros();
 		loop2Protector2 = 0;
 		
-		while(digitalRead(senMid->getEchoPin()) == HIGH || digitalRead(senUp->getEchoPin()) == HIGH || digitalRead(senLow->getEchoPin()) == HIGH){
+		while(digitalRead(senMid->getEchoPin()) == HIGH || 
+			  digitalRead(senUp->getEchoPin()) == HIGH || 
+			  digitalRead(senLow->getEchoPin()) == HIGH){
 			
 			loop2Protector2 = abs(micros() - loop2Protector1);
 			//cout<<"2 : "<<loop2Protector2<<endl;

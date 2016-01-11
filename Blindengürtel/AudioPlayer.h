@@ -5,10 +5,10 @@
 #define AUDIOPLAYER_H_
 
 #define NO_SOUND "NOSOUND"
-#define SOUND_UPPER "sound4.wav"
-#define SOUND_MID "sound3.wav"
-#define SOUND_LOWER "LowKurzerTon.wav"
-#define ERROR_SOUND "ErrorkurzerTon.wav"
+#define SOUND_UPPER "SOUND_UPPER.wav"
+#define SOUND_MID "SOUND_MID.wav"
+#define SOUND_LOWER "SOUND_LOWER.wav"
+#define ERROR_SOUND "ERROR_SOUND.wav"
 
 #define MAXDISTANCE 150
 
