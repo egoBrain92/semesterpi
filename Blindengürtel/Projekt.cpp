@@ -72,14 +72,6 @@ void audioFunction(AudioPlayer* ap){
 	}
 }
 
-void initiateSensors(void){
-	
-		senLow->initiateMeasurement();
-		senUp->initiateMeasurement();
-		senMid->initiateMeasurement();
-		
-		usleep(WAIT_FOR_SENESOR); //wait for Sensor to react
-}
 
 int main()
 {
@@ -99,31 +91,37 @@ int main()
 
 	int loop2Protector1;
 	int loop2Protector2;
-
+	
+	SensorMid* senMid;
+	SensorUp* senUp;
+	SensorLow* senLow;
+	
+	AudioPlayer* ap;
+	
 	//create different sensors
 	try{
-		SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
+		senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	}catch(bad_alloc&){
 		cout<<"failed to create SensorMid the system will reboot now."<<endl;
 		system("sudo reboot");
 	}
 	
 	try{
-		SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
+		senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
 	}catch(bad_alloc&){
 		cout<<"failed to create SensorUp the system will reboot now."<<endl;
 		system("sudo reboot");
 	}
 	
 	try{
-		SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
+		senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
 	}catch(bad_alloc&){
 		cout<<"failed to create SensorLow the system will reboot now."<<endl;
 		system("sudo reboot");
 	}
 	
 	try{
-		AudioPlayer* ap = new AudioPlayer();
+		ap = new AudioPlayer();
 	}catch(bad_alloc&){
 		cout<<"failed to create AudioPlayer the system will reboot now."<<endl;
 		system("sudo reboot");
@@ -137,6 +135,12 @@ int main()
 		checkMid = false;
 		checkUp = false;
 		checkLow = false;
+		
+		senLow->initiateMeasurement();
+		senUp->initiateMeasurement();
+		senMid->initiateMeasurement();
+		
+		usleep(WAIT_FOR_SENESOR); //wait for Sensor to react
 		
 		loop1Protector1 = micros();
 		loop1Protector2 = 0;
