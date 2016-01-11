@@ -32,7 +32,7 @@ class ISensor{
 		int trigPin;
 		int id;
 		int mmCounter;
-		double data[MIDDLE];
+		double data[MIDDLE] = {0, 0, 0};
 
 		double calcMidValue(void);
 	

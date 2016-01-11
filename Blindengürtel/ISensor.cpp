@@ -8,7 +8,7 @@ ISensor::ISensor(int ePin, int tPin, int sensId)
 : echoPin(ePin), trigPin(tPin), id(sensId){
 
 	this->mmCounter=0;
-	this->data[MIDDLE] = {0, 0, 0};
+	
 }
 
 ISensor::~ISensor(){}

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <unistd.h>
-#include <SFML/Audio.hpp>
+
 
 
 
@@ -12,9 +12,10 @@ using namespace std;
 
 AudioPlayer::AudioPlayer(soundPair* sp)
 :sound(sp){
-	sound->soundIndex= -1;
-	sound->soundPath = NO_SOUND;
 	this->pause = 1;
+	sb1.loadFromFile(SOUND_UPPER);
+	sb2.loadFromFile(SOUND_LOWER);
+	sb3.loadFromFile(SOUND_MID);
 }
 
 int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
@@ -35,18 +36,18 @@ int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
 
 void AudioPlayer::playSound(){
 	if(this->sound->soundPath == SOUND_UPPER){
-		sound.setBuffer(sb1);
-		sound.play();
+		player.setBuffer(sb1);
+		player.play();
 	}
 
 	if(this->sound->soundPath == SOUND_LOWER){
-		sound.setBuffer(sb2);
-		sound.play();
+		player.setBuffer(sb2);
+		player.play();
 	}
 
 	if(this->sound->soundPath == SOUND_MID){
-		sound.setBuffer(sb3);
-		sound.play();
+		player.setBuffer(sb3);
+		player.play();
 	}
 }
 
@@ -77,6 +78,10 @@ string AudioPlayer::chooseSoundPath(){
 				break;
 		}
 	return this->sound->soundPath;
+}
+
+soundPair* AudioPlayer::getSoundPair(){
+	return this->sound;
 }
 
 

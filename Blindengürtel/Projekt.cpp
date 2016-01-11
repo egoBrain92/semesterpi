@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
-//#include <pthread.h>
 #include <cstdlib>
 #include <wiringPi.h>
 #include "SensorMid.h"
@@ -28,8 +27,6 @@
 #define TRIG_PIN_SMID	6
 
 using namespace std;
-
-
 
 mutex mtx1;
 mutex mtx2;
@@ -59,19 +56,10 @@ void setup() {
 }
 
 void audioFunction(AudioPlayer* ap){
-	sf::SoundBuffer sb1;
-	sf::SoundBuffer sb2;
-	sf::SoundBuffer sb3;
-	sf::Sound sound;
-	
-	sb1.loadFromFile(SOUND_UPPER);
-	sb2.loadFromFile(SOUND_LOWER);
-	sb3.loadFromFile(SOUND_MID);
-	
 	
 	while(1){
 		mtx1.lock();
-		ap->playSound(sound, sb1, sb2, sb3);
+		ap->playSound();
 		mtx1.unlock();
 
 		mtx2.lock();
@@ -90,8 +78,6 @@ int main()
 	long travelTimeMid;
 	
 	int soundIndex;
-	int i;
-	int distance;
 	
 	bool checkMid;
 	bool checkUp;
@@ -103,7 +89,7 @@ int main()
 	int loop2Protector1;
 	int loop2Protector2;
 
-	soundPair* sp;
+	soundPair* sp = new soundPair();
 
 	//create different sensors
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
