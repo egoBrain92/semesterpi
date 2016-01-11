@@ -10,9 +10,18 @@ using namespace std;
 AudioPlayer::AudioPlayer(){
 	this->pause = 1;
 	sound = new soundPair();
-	sb1.loadFromFile(SOUND_UPPER);
-	sb2.loadFromFile(SOUND_LOWER);
-	sb3.loadFromFile(SOUND_MID);
+	if (!sb1.loadFromFile(SOUND_UPPER)){
+		cout<<"failed to load SOUND_MID the system will reboot now."<<endl;
+		system("sudo reboot");
+	}
+	if (!sb2.loadFromFile(SOUND_LOWER)){
+		cout<<"failed to load SOUND_MID the system will reboot now."<<endl;
+		system("sudo reboot");
+	}
+	if (!sb3.loadFromFile(SOUND_MID)){
+		cout<<"failed to load SOUND_MID the system will reboot now."<<endl;
+		system("sudo reboot");
+	}
 }
 
 AudioPlayer::~AudioPlayer(){
