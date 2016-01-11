@@ -3,7 +3,7 @@
 
 #include "ISensor.h"
 
-#define SENLOW_ANGLE 33
+#define SENUP_ANGLE 33
 
 ///Implementation for the sensor that will measure in an 33° angle upwards	
 class SensorUp: public ISensor{	
