@@ -19,7 +19,8 @@ typedef struct soundPair {
 
 class AudioPlayer {
 	public:
-		AudioPlayer(soundPair*);
+		AudioPlayer();
+		~AudioPlayer();
 		void playSound();
 		int chooseSoundindex(double[], int);
 		std::string chooseSoundPath(void);

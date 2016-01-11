@@ -23,7 +23,7 @@ double SensorMid::calcDistance(int travelTime){
 	   
 		//Get distance in cm
 		distance = travelTime / DIV;
-		//std::cout<<"distance calc: "<<distance<<" senID: "<<getId()<<std::endl;
+		std::cout<<"distance calc: "<<distance<<" senID: "<<getId()<<std::endl;
 	
     return distance;
 }

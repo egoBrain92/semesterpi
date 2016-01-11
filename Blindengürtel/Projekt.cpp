@@ -41,9 +41,9 @@ double intensity;
 
 void setup() {
         wiringPiSetup();
+        
         pinMode(ECHO_PIN_SUP, INPUT);
         pinMode(TRIG_PIN_SUP, OUTPUT);
-        
         digitalWrite(TRIG_PIN_SUP, LOW);
 
 		pinMode(TRIG_PIN_SLOW, OUTPUT);
@@ -89,14 +89,12 @@ int main()
 	int loop2Protector1;
 	int loop2Protector2;
 
-	soundPair* sp = new soundPair();
-
 	//create different sensors
 	SensorMid* senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	SensorUp* senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
 	SensorLow* senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
 	
-	AudioPlayer* ap = new AudioPlayer(sp);
+	AudioPlayer* ap = new AudioPlayer();
 
 	//create thread to play acustic signals
 	thread audioThread(audioFunction, ap);
@@ -136,7 +134,7 @@ int main()
 			//cout<<"2 : "<<loop2Protector2<<endl;
 			if(loop2Protector2 > SENSOR_BAD_READ){
 				cout<<"2 : "<<loop2Protector2<<endl;
-				break; //break from the loop if the senesor did not react properly
+				break; //break from the loop if the sensor did not react properly
 			}
 			//usleep(50);
 			if(digitalRead(senMid->getEchoPin()) == LOW && checkMid == false){

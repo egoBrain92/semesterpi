@@ -6,9 +6,11 @@
 
 ISensor::ISensor(int ePin, int tPin, int sensId)
 : echoPin(ePin), trigPin(tPin), id(sensId){
-
-	this->mmCounter=0;
-	
+	int i;
+	this->mmCounter = 0;
+	for(i = 0; i < MIDDLE; i++){
+		data[i] = 0;
+	}
 }
 
 ISensor::~ISensor(){}

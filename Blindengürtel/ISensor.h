@@ -2,15 +2,9 @@
 #ifndef ISENSOR_H_
 #define ISENSOR_H_
 
-#define MIDDLE 3	 //number of measurements to middle
-#define NOTICE_RANGE 150 //measurement range in cm
-#define TAIL_HIGHT 100  //Sensor hight
-
-#define SONIC_SPEED 343 //in m/s
+#define MIDDLE 5	 //number of measurements to middle
 
 #define DIV 58		//divisor for calculating distance of sonictraveltime in cm
-
-
 
 class ISensor{
 	public:
@@ -32,7 +26,7 @@ class ISensor{
 		int trigPin;
 		int id;
 		int mmCounter;
-		double data[MIDDLE] = {0, 0, 0};
+		double data[MIDDLE];
 
 		double calcMidValue(void);
 	

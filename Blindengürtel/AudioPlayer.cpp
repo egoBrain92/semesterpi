@@ -5,17 +5,18 @@
 #include <stdio.h>
 #include <unistd.h>
 
-
-
-
 using namespace std;
 
-AudioPlayer::AudioPlayer(soundPair* sp)
-:sound(sp){
+AudioPlayer::AudioPlayer(){
 	this->pause = 1;
+	sound = new soundPair();
 	sb1.loadFromFile(SOUND_UPPER);
 	sb2.loadFromFile(SOUND_LOWER);
 	sb3.loadFromFile(SOUND_MID);
+}
+
+AudioPlayer::~AudioPlayer(){
+	delete sound;
 }
 
 int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
