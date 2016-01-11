@@ -6,6 +6,7 @@
 
 #define DIV 58		//divisor for calculating distance of sonictraveltime in cm
 
+///abstract class for the implementation of HC-SR04 Ultrasonic Rangefinder 
 class ISensor{
 	public:
 		ISensor(int, int, int);

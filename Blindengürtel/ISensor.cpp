@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 
-///abstract class for the HC-SR04 Ultrasonic Rangefinder
+
 ISensor::ISensor(int ePin, int tPin, int sensId)
 : echoPin(ePin), trigPin(tPin), id(sensId){
 	

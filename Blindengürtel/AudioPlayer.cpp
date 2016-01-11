@@ -7,6 +7,7 @@
 
 using namespace std;
 
+///loads the soundfiles and creates the soundPair also sets pause to 1 for the first few measurement
 AudioPlayer::AudioPlayer(){
 	this->pause = 1;
 	
@@ -36,9 +37,9 @@ AudioPlayer::~AudioPlayer(){
 }
 
 ///chooses the soundIndex for the latest measurement
-///@param distances is the array with the latest middeled measurement 
-///@param the number of sensor which take measurements 
-///@return returns the soundIndex which should be played 
+///@param distances[] is the array with the latest middeled measurement 
+///@param amountSen the number of sensor which take measurements 
+///@return returns the soundIndex which should be played
 int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
 	int i;
 	int distance;
@@ -96,12 +97,12 @@ string AudioPlayer::chooseSoundPath(){
 	return this->sound->soundPath;
 }
 
-///@return returns the duration of the silence in between two sound output
+///@return returns the duration of the silence in between two sound outputs
 int AudioPlayer::getPause(){
 	return this->pause;
 }
 
-///set the duration of the silence in between two sound output
+///set the duration of the silence in between two sound outputs
 void AudioPlayer::setPause(int newPause){
 	this->pause = newPause;
 }

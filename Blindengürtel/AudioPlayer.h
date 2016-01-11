@@ -12,11 +12,13 @@
 
 #define MAXDISTANCE 150
 
+///soundPair holds the soundIndex and the soundPath
 typedef struct soundPair {
-	int soundIndex = -1;
-	std::string soundPath = NO_SOUND;
+	int soundIndex = -1; 				///< soundIndex is used to deterime which sound should be played
+	std::string soundPath = NO_SOUND;	///< soundPath is used to deterime which sound should be played
 } soundPair;
 
+///will play, load and choose the sounds in the appropriate moment
 class AudioPlayer {
 	public:
 		AudioPlayer();
@@ -28,8 +30,10 @@ class AudioPlayer {
 		int getPause(void);
 		soundPair* getSoundPair(void);
 	
-	private:		
-		int pause;
+	private:
+	
+		
+		int pause; //!< stores the duration of the silence in between two sound output
 		
 		soundPair* sound;
 		

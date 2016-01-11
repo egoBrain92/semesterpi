@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 
-
-	
 SensorMid::SensorMid(int ePin, int tPin, int sensId)
 : ISensor(ePin, tPin, sensId){
 

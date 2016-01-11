@@ -6,10 +6,6 @@
 #include <cmath>
 #include <wiringPi.h>
 
-#define SENUP_ANGLE 33
-
-
-	
 SensorUp::SensorUp(int ePin, int tPin, int id)
 : ISensor(ePin, tPin, id){
 
