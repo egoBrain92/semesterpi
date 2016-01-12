@@ -55,7 +55,7 @@ void ISensor::pushData(double distances[]){
 	distances[this->id] = calcMidValue();
 }
 
-///Trigger the sensor to send 8x40 kHz ultrasonic impuls for starting the measurement via GPIO.
+///Trigger the sensor to send 8 ultrasonic pulses (40 kHz) for starting the measurement via GPIO.
 void ISensor::initiateMeasurement(){    
         digitalWrite(this->trigPin, LOW); 
 		//wait for the GPIO to react
@@ -66,16 +66,19 @@ void ISensor::initiateMeasurement(){
         digitalWrite(this->trigPin, LOW); 
 }
 
+///Getter for echoPin.
 ///@return returns the GPIO echoPin for the sensor mapped by wiringPi
 int ISensor::getEchoPin(){
 	return this->echoPin;
 }
 
+///Getter for trigPin.
 ///@return returns the GPIO trigPin for the sensor mapped by wiringPi
 int ISensor::getTrigPin(){
 	return this->trigPin;
 }
 
+///Getter for id.
 ///@return returns the id of the sensor which is set in the constructor
 int ISensor::getId(){
 	return this->id;

@@ -6,7 +6,7 @@
 #include <cmath>
 #include <wiringPi.h>
 
-///Creats an obejct of SensorLow for the HC-SR04 which is measureing in a 33° angle downwards.\n
+///Creats an obejct of SensorLow for the HC-SR04 which is measureing in an 33° angle downwards.\n
 ///@param ePin Is the echo GPIO pin the is used for this sensor and mapped by the wiringPi.h.
 ///@param tPin Is the trigger GPIO pin the is used for this sensor and mapped by the wiringPi.h.
 ///@param sensId Is the id which used to push the averaged values in the correct position of the distances[] array.
