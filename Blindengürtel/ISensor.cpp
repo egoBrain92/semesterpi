@@ -4,23 +4,27 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 
-
+///Creats an obejct of a sensor for the HC-SR04.\n
+///@param ePin Is the echo GPIO pin the is used for this sensor and mapped by the wiringPi.h.
+///@param tPin Is the trigger GPIO pin the is used for this sensor and mapped by the wiringPi.h.
+///@param sensId Is the id which used to push the averaged values in the correct position of the distances[] array.
 ISensor::ISensor(int ePin, int tPin, int sensId)
 : echoPin(ePin), trigPin(tPin), id(sensId){
-	
+
 	int i;
-	
-	this->mmCounter = 0;
-	
 	for(i = 0; i < MIDDLE; i++){
 		data[i] = 0;
 	}
+	
+	this->mmCounter = 0;
+	
+	
 }
 
 
 ISensor::~ISensor(){}
 
-///middle the measurements of the sensor in the data array
+///Averages the measurements of the sensor in the data array.
 double ISensor::calcMidValue(){
 	int i;
 	double midValue = 0;
@@ -33,8 +37,8 @@ double ISensor::calcMidValue(){
 	return midValue; 
 }
 
-///store measurements in correct position in data
-///@param the time which it takes for the sonic pulse to travel from the sensor to the obstacle and back to the sensor
+///Stores measurements in correct position in data.
+///@param traveltime Is the time which it takes for the sonic pulse to travel from the sensor to the obstacle and back to the sensor.
 void ISensor::collectMeasurements(int traveltime){
 	data[this->mmCounter] = calcDistance(traveltime);
 	
@@ -45,8 +49,8 @@ void ISensor::collectMeasurements(int traveltime){
 	}	
 }
 
-///pushes middeld measurments of all sensors to the global distances array
-///@param distances is the array that holds the middeld measurments
+///Pushes averaged measurments of all sensors to the global distances array
+///@param distances[] is the array that holds the averaged measurments
 void ISensor::pushData(double distances[]){
 	distances[this->id] = calcMidValue();
 }
@@ -58,7 +62,7 @@ void ISensor::initiateMeasurement(){
         delayMicroseconds(5);
         digitalWrite(this->trigPin, HIGH);
 		//wait for the sensor to react if the times is to short the sensor may not trigger
-        delayMicroseconds(10); 
+        delayMicroseconds(5); 
         digitalWrite(this->trigPin, LOW); 
 }
 

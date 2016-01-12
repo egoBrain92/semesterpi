@@ -12,35 +12,58 @@
 #include <SFML/Audio.hpp>
 #include <cmath>
 
+///The time after the measurement is considered a bad value in microseconds.
 #define SENSOR_BAD_READ 40000
-#define WAIT_FOR_SENESOR 400
-#define ONE_SECOUND 1000000
+///After a measurement the sensor should not instantly be triggered again.
+#define WAIT_SENSOR_COOLDOWN 50000
+///Delay duration that is needed after initiating the measurements in microseconds.
+#define WAIT_FOR_SENSORS 400
+///One second in microseconds.
+#define ONE_SECOND 1000000
+///The number of sensors that are connected to the pi.
 #define NUMBER_OF_SENSORS 3
+///Initial values for the distances[NUMBER_OF_SENSORS] array so the first few measurements don't create bad output.
 #define INIT_ARRAY_VAL 151
-
+///Echo pin of the sensor that will measure in an 33° angle upwards.
 #define ECHO_PIN_SUP	15
+///Trigger pin of the sensor that will measure in an 33° angle upwards.
 #define TRIG_PIN_SUP	16
-
+///Echo pin of the sensor that will measure in an 33° angle downwards.
 #define ECHO_PIN_SLOW	1
+///Trigger pin of the sensor that will measure in an 33° angle downwards.
 #define TRIG_PIN_SLOW	4
-
+///Echo pin for the sensor that will measure directly in front of the user.
 #define ECHO_PIN_SMID	5
+///Trigger pin for the sensor that will measure directly in front of the user.
 #define TRIG_PIN_SMID	6
 
 using namespace std;
 
-mutex mtx1;
-mutex mtx2;
+///Is used to protect the soundPath from the main and AudioPlayer thread.
+mutex soundPathMutex;
+///Is used to protect the intensity from the main and AudioPlayer thread.
+mutex intensityMutex;
 
-	/*distances of all Sensors
-	0 : Sensor Up
-	1 : Sensor Mid
-	2 : Sensor down
-	*/
-	
-double distances[NUMBER_OF_SENSORS]= {INIT_ARRAY_VAL, INIT_ARRAY_VAL ,INIT_ARRAY_VAL};
+/*distances of all Sensors
+0 : Sensor Up
+1 : Sensor Mid
+2 : Sensor down*/
+
+///Holds the averaged values of the measurements.
+double distances[NUMBER_OF_SENSORS];
+
+
+///Stores the duration of the silence in between two sound outputs.
 double intensity;	
 
+///Initiate the values of the distances[] array with INIT_ARRAY_VAL.
+void initDistancesArray(){
+	for(int i = 0; i < NUMBER_OF_SENSORS; i++){
+		distances[i] = INIT_ARRAY_VAL;
+	}
+}
+
+///Sets the GPIO pins for all sensors.
 void setup() {
         wiringPiSetup();
         
@@ -57,24 +80,27 @@ void setup() {
         digitalWrite(TRIG_PIN_SMID, LOW);
 }
 
+///Used for the thread audioThread which will play sounds in the background.
+///@param ap is the AudioPlayer Object that is used to play and load sounds.
 void audioFunction(AudioPlayer* ap){
 	
 	while(1){
-		mtx1.lock();
+		soundPathMutex.lock();
 		ap->playSound();
-		mtx1.unlock();
+		soundPathMutex.unlock();
 
-		mtx2.lock();
-		ap->setPause(intensity * ONE_SECOUND);
-		mtx2.unlock();
+		intensityMutex.lock();
+		ap->setPause(intensity * ONE_SECOND);
+		intensityMutex.unlock();
 
 		usleep(ap->getPause());
 	}
 }
 
-
+///core of the programm
 int main()
 {
+	initDistancesArray();
 	setup();
 	long travelTimeUp;
 	long travelTimeLow;
@@ -136,11 +162,11 @@ int main()
 		checkUp = false;
 		checkLow = false;
 		
+		senMid->initiateMeasurement();
 		senLow->initiateMeasurement();
 		senUp->initiateMeasurement();
-		senMid->initiateMeasurement();
 		
-		usleep(WAIT_FOR_SENESOR); //wait for Sensor to react
+		usleep(WAIT_FOR_SENSORS); //wait for Sensor to react
 		
 		loop1Protector1 = micros();
 		loop1Protector2 = 0;
@@ -187,30 +213,30 @@ int main()
 			}		
 		}
 
-		senMid->collectMeasurements(travelTimeMid);
 		senUp->collectMeasurements(travelTimeUp);
 		senLow->collectMeasurements(travelTimeLow);
+		senMid->collectMeasurements(travelTimeMid);
 		
-		//push middled data of each sensor 
+		//push averaged data of each sensor 
 		senMid->pushData(distances);
 		senUp->pushData(distances);
 		senLow->pushData(distances);
 	
-		usleep(50000); //break between measurements ~20 measurements per second
+		usleep(WAIT_SENSOR_COOLDOWN); //break between measurements ~20 measurements per second
 		
 		soundIndex = ap->chooseSoundindex(distances, NUMBER_OF_SENSORS);
 	
-		mtx1.lock();
+		soundPathMutex.lock();
 		ap->chooseSoundPath();
-		mtx1.unlock();
+		soundPathMutex.unlock();
 
 		if(ap->getSoundPair()->soundIndex != -1){
-			mtx2.lock();
-			intensity = distances[soundIndex]/MAXDISTANCE;
-			mtx2.unlock();
+			intensityMutex.lock();
+			intensity = distances[soundIndex]/MAX_DISTANCE;
+			intensityMutex.unlock();
 		}
 	
-		//cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
+		cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
 	}
 	
 	audioThread.join();

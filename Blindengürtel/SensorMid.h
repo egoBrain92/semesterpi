@@ -3,7 +3,7 @@
 
 #include "ISensor.h"
 
-///Implementation for the sensor that will measure the 33° down
+///Implementation for the sensor that will measure directly in front of the user.
 class SensorMid: public ISensor{	
 	public:	
 		SensorMid(int, int, int);

@@ -2,11 +2,13 @@
 #ifndef ISENSOR_H_
 #define ISENSOR_H_
 
-#define MIDDLE 5	 //number of measurements to middle
+///Amount of measurements to average.
+#define MIDDLE 5
 
-#define DIV 58		//divisor for calculating distance of sonictraveltime in cm
+///Divisor for calculating distance in cm.
+#define DIV 58
 
-///abstract class for the implementation of HC-SR04 Ultrasonic Rangefinder 
+///Abstract class for the implementation of HC-SR04 ultrasonic rangefinder.
 class ISensor{
 	public:
 		ISensor(int, int, int);

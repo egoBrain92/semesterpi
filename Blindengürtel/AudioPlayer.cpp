@@ -7,7 +7,7 @@
 
 using namespace std;
 
-///loads the soundfiles and creates the soundPair also sets pause to 1 for the first few measurement
+///Loads the soundfiles and creates the soundPair also sets pause to 1 for the first few measurement.
 AudioPlayer::AudioPlayer(){
 	this->pause = 1;
 	
@@ -36,16 +36,16 @@ AudioPlayer::~AudioPlayer(){
 	delete sound;
 }
 
-///chooses the soundIndex for the latest measurement
-///@param distances[] is the array with the latest middeled measurement 
-///@param amountSen the number of sensor which take measurements 
-///@return returns the soundIndex which should be played
+///Chooses the soundIndex for the latest measurement.
+///@param distances[] is the array with the latest middeled measurement.
+///@param amountSen the number of sensor which take measurements.
+///@return returns the soundIndex which should be played.
 int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
 	int i;
 	int distance;
 
 	this->sound->soundIndex = -1;
-	distance = MAXDISTANCE;
+	distance = MAX_DISTANCE;
 
 	for(i = 0; i < amountSen; i++){
 		if(distances[i] <= distance){
@@ -56,7 +56,7 @@ int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
 	return this->sound->soundIndex;
 }
 
-///palys the sound that is specified by soundPath
+///Palys the sound that is specified in soundPath.
 void AudioPlayer::playSound(){
 	if(this->sound->soundPath == SOUND_UPPER){
 		player.setBuffer(sb1);
@@ -74,7 +74,7 @@ void AudioPlayer::playSound(){
 	}
 }
 
-///chooses the soundPath that should be played for the latest measurement
+///Chooses the soundPath that should be played for the latest measurement.
 ///@returns returns the soundPath to the file which should be played
 string AudioPlayer::chooseSoundPath(){
 	switch(this->sound->soundIndex){
@@ -97,17 +97,17 @@ string AudioPlayer::chooseSoundPath(){
 	return this->sound->soundPath;
 }
 
-///@return returns the duration of the silence in between two sound outputs
+///@return Returns the duration of the silence in between two sound outputs.
 int AudioPlayer::getPause(){
 	return this->pause;
 }
 
-///set the duration of the silence in between two sound outputs
+///Sets the duration of the silence in between two sound outputs.
 void AudioPlayer::setPause(int newPause){
 	this->pause = newPause;
 }
 
-///@return returns the soundPair which includes the soundPath and soundIndex
+///@return Returns the soundPair which includes the soundPath and soundIndex.
 soundPair* AudioPlayer::getSoundPair(){
 	return this->sound;
 }

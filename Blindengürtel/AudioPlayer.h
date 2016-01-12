@@ -4,21 +4,28 @@
 #ifndef AUDIOPLAYER_H_
 #define AUDIOPLAYER_H_
 
+///Is used when no sound should be played.
 #define NO_SOUND "NOSOUND"
+///Path of the soundfile for the sensor that will measure in an 33° angle upwards.
 #define SOUND_UPPER "SOUND_UPPER.wav"
+///Path of the soundfile for the sensor that will measure directly in front of the user.
 #define SOUND_MID "SOUND_MID.wav"
+///Path of the soundfile for the sensor that will measure in an 33° angle downwards.
 #define SOUND_LOWER "SOUND_LOWER.wav"
 #define ERROR_SOUND "ERROR_SOUND.wav"
 
-#define MAXDISTANCE 150
+///The distance in which the sensor should trigger sound outputs.
+#define MAX_DISTANCE 150
 
-///soundPair holds the soundIndex and the soundPath
+///Holds the soundIndex and the soundPath.
 typedef struct soundPair {
-	int soundIndex = -1; 				///< soundIndex is used to deterime which sound should be played
-	std::string soundPath = NO_SOUND;	///< soundPath is used to deterime which sound should be played
+	///Used to deterime which sound should be played.
+	int soundIndex = -1;
+	///Used to deterime which sound should be played.
+	std::string soundPath = NO_SOUND;
 } soundPair;
 
-///will play, load and choose the sounds in the appropriate moment
+///Will play, load and choose the sounds in the appropriate moment.
 class AudioPlayer {
 	public:
 		AudioPlayer();
@@ -33,7 +40,7 @@ class AudioPlayer {
 	private:
 	
 		
-		int pause; //!< stores the duration of the silence in between two sound output
+		int pause;
 		
 		soundPair* sound;
 		
