@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 
-///Creats an obejct of a sensor for the HC-SR04.\n
-///@param ePin Is the echo GPIO pin the is used for this sensor and mapped by the wiringPi.h.
-///@param tPin Is the trigger GPIO pin the is used for this sensor and mapped by the wiringPi.h.
-///@param sensId Is the id which used to push the averaged values in the correct position of the distances[] array.
+///Is used by the inheriting classes to create the sensor object for the HC-SR04.
+///@param ePin Is the echo GPIO pin that is used for this sensor and mapped by the wiringPi.h.
+///@param tPin Is the trigger GPIO pin that the is used for this sensor and mapped by the wiringPi.h.
+///@param sensId Is the id which is used to push the averaged values in the correct position of the distances[] array.
 ISensor::ISensor(int ePin, int tPin, int sensId)
 : echoPin(ePin), trigPin(tPin), id(sensId){
 
@@ -21,7 +21,7 @@ ISensor::ISensor(int ePin, int tPin, int sensId)
 	
 }
 
-
+///Destroys the created ISensor object.
 ISensor::~ISensor(){}
 
 ///Averages the measurements of the sensor in the data array.
@@ -37,8 +37,8 @@ double ISensor::calcMidValue(){
 	return midValue; 
 }
 
-///Stores measurements in correct position in data.
-///@param traveltime Is the time which it takes for the sonic pulse to travel from the sensor to the obstacle and back to the sensor.
+///Stores measurements in the correct position in the data[] array.
+///@param traveltime Is the time which it takes the sonic pulse to travel from the sensor to the obstacle and back.
 void ISensor::collectMeasurements(int traveltime){
 	data[this->mmCounter] = calcDistance(traveltime);
 	
@@ -49,13 +49,13 @@ void ISensor::collectMeasurements(int traveltime){
 	}	
 }
 
-///Pushes averaged measurments of all sensors to the global distances array
+///Pushes averaged measurments of all sensors to the global distances[] array.
 ///@param distances[] is the array that holds the averaged measurments
 void ISensor::pushData(double distances[]){
 	distances[this->id] = calcMidValue();
 }
 
-///trigger the sensor to send an ultrasonic impuls for starting the measurement via GPIO
+///Trigger the sensor to send 8x40 kHz ultrasonic impuls for starting the measurement via GPIO.
 void ISensor::initiateMeasurement(){    
         digitalWrite(this->trigPin, LOW); 
 		//wait for the GPIO to react

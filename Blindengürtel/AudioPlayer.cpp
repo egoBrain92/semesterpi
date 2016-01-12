@@ -32,6 +32,7 @@ AudioPlayer::AudioPlayer(){
 	}
 }
 
+///Destroys the created AudiPlayer object and uses delete to free the memeory of the variable sound.
 AudioPlayer::~AudioPlayer(){
 	delete sound;
 }
@@ -56,7 +57,8 @@ int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
 	return this->sound->soundIndex;
 }
 
-///Palys the sound that is specified in soundPath.
+///Palys the sound that is specified in soundPath.\n
+///player.play() creates a new thread and therefore the audio will play without blocking anything in the process.
 void AudioPlayer::playSound(){
 	if(this->sound->soundPath == SOUND_UPPER){
 		player.setBuffer(sb1);

@@ -12,6 +12,7 @@
 #define SOUND_MID "SOUND_MID.wav"
 ///Path of the soundfile for the sensor that will measure in an 33° angle downwards.
 #define SOUND_LOWER "SOUND_LOWER.wav"
+///Path of the soundfile for possible errors.
 #define ERROR_SOUND "ERROR_SOUND.wav"
 
 ///The distance in which the sensor should trigger sound outputs.
@@ -38,8 +39,6 @@ class AudioPlayer {
 		soundPair* getSoundPair(void);
 	
 	private:
-	
-		
 		int pause;
 		
 		soundPair* sound;

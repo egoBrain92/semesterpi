@@ -52,7 +52,6 @@ mutex intensityMutex;
 ///Holds the averaged values of the measurements.
 double distances[NUMBER_OF_SENSORS];
 
-
 ///Stores the duration of the silence in between two sound outputs.
 double intensity;	
 

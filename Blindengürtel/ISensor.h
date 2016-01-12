@@ -13,7 +13,8 @@ class ISensor{
 	public:
 		ISensor(int, int, int);
 		~ISensor();
-
+		
+		///Inheriting classes must implement this method for there own calculating method.
 		virtual double calcDistance(int) = 0;
 
 		int getId(void);
