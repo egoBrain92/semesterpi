@@ -15,7 +15,7 @@
 ///The time after the measurement is considered a bad value in microseconds.
 #define SENSOR_BAD_READ 40000
 ///After a measurement the sensor should not instantly be triggered again.
-#define WAIT_SENSOR_COOLDOWN 50000
+#define WAIT_SENSOR_COOLDOWN 51000
 ///Delay duration that is needed after initiating the measurements in microseconds.
 #define WAIT_FOR_SENSORS 400
 ///One second in microseconds.
@@ -58,7 +58,7 @@ double intensity;
 ///Logs error messages to the log.txt file in the project directory.
 void writeToLog(const string message){
 	
-	FILE* file = fopen("log.txt", "a");
+	FILE* file = fopen("/home/pi/Desktop/autostartfiles/Blindengürtel/log.txt", "a");
 	if(file != NULL){
 		fprintf(file, "%s\n", message.c_str());
 		fclose(file);
@@ -107,10 +107,7 @@ void audioFunction(AudioPlayer* ap){
 }
 
 ///core of the programm
-int main()
-{	
-	string myMessage = "hallo";
-	writeToLog(myMessage);
+int main(){
 	initDistancesArray();
 	setup();
 	long travelTimeUp;
@@ -135,38 +132,35 @@ int main()
 	
 	AudioPlayer* ap;
 	
-	//create different sensors
 	try{
 		senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	}catch(bad_alloc&){
-		writeToLog("Failed to create SensorMid");
-		system("sudo reboot");
+		writeToLog("Failed to create SensorMid.");
+		//system("sudo reboot");
 	}
 	
 	try{
 		senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
 	}catch(bad_alloc&){
-		writeToLog("Failed to create SensorUp");
-		system("sudo reboot");
+		writeToLog("Failed to create SensorUp.");
+		//system("sudo reboot");
 	}
 	
 	try{
 		senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
 	}catch(bad_alloc&){
-		writeToLog("Failed to create SensorLow");
-		system("sudo reboot");
+		writeToLog("Failed to create SensorLow.");
+		//system("sudo reboot");
 	}
 	
 	try{
 		ap = new AudioPlayer();
 	}catch(bad_alloc&){
-		writeToLog("Failed to create AudioPlayer");
-		system("sudo reboot");
+		writeToLog("Failed to create AudioPlayer.");
+		//system("sudo reboot");
 	}
-
-	//create thread to play acustic signals
-	thread audioThread(audioFunction, ap);
-	audioThread.detach();
+	
+	thread audioThread(audioFunction, ap); //create thread to play sounds in the background
 	
 	while(1){
 		checkMid = false;
@@ -188,10 +182,8 @@ int main()
 				  
 			loop1Protector2 = abs(micros() - loop1Protector1);
 			if(loop1Protector2 > SENSOR_BAD_READ){
-				cout<<"1 : "<<loop1Protector2<<endl;
 				break; //break from the loop if the sensor did not react properly
 			}
-			//cout<<"1 : "<<loop1Protector2<<endl;
 		}
 		
 		long startTime = micros();
@@ -204,9 +196,7 @@ int main()
 			  digitalRead(senLow->getEchoPin()) == HIGH){
 			
 			loop2Protector2 = abs(micros() - loop2Protector1);
-			//cout<<"2 : "<<loop2Protector2<<endl;
 			if(loop2Protector2 > SENSOR_BAD_READ){
-				cout<<"2 : "<<loop2Protector2<<endl;
 				break; //break from the loop if the sensor did not react properly
 			}
 			//usleep(50);
@@ -246,14 +236,11 @@ int main()
 			intensity = distances[soundIndex]/MAX_DISTANCE;
 			intensityMutex.unlock();
 		}
-	
-		cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
+		//cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
 	}
-	
 	audioThread.join();
-	
-	writeToLog("Waiting for Audiothhread failed");
-	system("sudo reboot");
+	writeToLog("Waiting for Audiothhread failed.");
+	//system("sudo reboot");
 	
     return 0;
 }

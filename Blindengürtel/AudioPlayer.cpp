@@ -1,6 +1,5 @@
 #include "AudioPlayer.h"
 #include <stdlib.h>
-#include <string>
 #include <iostream>
 #include <stdio.h>
 #include <unistd.h>
@@ -14,21 +13,21 @@ AudioPlayer::AudioPlayer(){
 	try{
 		sound = new soundPair();
 	}catch(bad_alloc&){
-		cout<<"failed to create soundPair the system will reboot now."<<endl;
-		system("sudo reboot");
+		writeToLogAudioPlayer("Failed to create soundPair the system will reboot now.");
+		//system("sudo reboot");
 	}
 	
 	if (!sb1.loadFromFile(SOUND_UPPER)){
-		cout<<"failed to load SOUND_MID the system will reboot now."<<endl;
-		system("sudo reboot");
+		writeToLogAudioPlayer("Failed to create SOUND_UPPER the system will reboot now.");
+		//system("sudo reboot");
 	}
 	if (!sb2.loadFromFile(SOUND_LOWER)){
-		cout<<"failed to load SOUND_MID the system will reboot now."<<endl;
-		system("sudo reboot");
+		writeToLogAudioPlayer("Failed to create SOUND_LOWER the system will reboot now.");
+		//system("sudo reboot");
 	}
 	if (!sb3.loadFromFile(SOUND_MID)){
-		cout<<"failed to load SOUND_MID the system will reboot now."<<endl;
-		system("sudo reboot");
+		writeToLogAudioPlayer("Failed to create SOUND_MID the system will reboot now.");
+		//system("sudo reboot");
 	}
 }
 
@@ -117,6 +116,15 @@ soundPair* AudioPlayer::getSoundPair(){
 	return this->sound;
 }
 
+///Logs error messages to the log.txt file in the project directory.
+void AudioPlayer::writeToLogAudioPlayer(const string message){
+	
+	FILE* file = fopen("log.txt", "a");
+	if(file != NULL){
+		fprintf(file, "%s\n", message.c_str());
+		fclose(file);
+	}
+}
 
 
 
