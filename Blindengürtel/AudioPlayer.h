@@ -20,24 +20,47 @@
 
 ///Holds the soundIndex and the soundPath.
 typedef struct soundPair {
-	///Used to deterime which sound should be played.
-	int soundIndex = -1;
-	///Used to deterime which sound should be played.
-	std::string soundPath = NO_SOUND;
+	public:
+		///Used to deterime which sound should be played.
+		int soundIndex = -1;
+		///Used to deterime which sound should be played.
+		std::string soundPath = NO_SOUND;
 } soundPair;
 
 ///Will play, load and choose the sounds in the appropriate moment.
 class AudioPlayer {
 	public:
+		///Loads the soundfiles and creates a soundPair. Also sets pause to 1 for the first measurement.
 		AudioPlayer();
+		///Destroys the created AudioPlayer object and uses delete to free the memeory of the variable sound.
 		~AudioPlayer();
+		
+		///Palys the sound that is specified in soundPath.\n
+		///player.play() creates a new thread and therefore the audio will play without blocking anything in the process.
 		void playSound();
-		int chooseSoundindex(double[], int);
+		
+		///Chooses the soundIndex for the latest measurements.
+		///@param distances[] is the array with the latest averaged measurement.
+		///@param amountSen the number of sensor which take measurements.
+		///@return returns the soundIndex which should be played.
+		int chooseSoundindex(double distances[], int amountSen);
+		
+		///Chooses the soundPath that should be played for the latest measurement.
+		///@returns returns the soundPath to the file which should be played
 		std::string chooseSoundPath(void);
+		
+		///Sets the duration of the silence in between two sound outputs.
+		///@param newPause Will be the new duration of the silence in between two sound outputs.
 		void setPause(int);
+		
+		///Getter for pause.
+		///@return Returns the duration of the silence in between two sound outputs.
 		int getPause(void);
+		
+		///Getter for sound.
+		///@return Returns the soundPair which includes the soundPath and soundIndex.
 		soundPair* getSoundPair(void);
-		void writeToLogAudioPlayer(const std::string);
+
 	
 	private:
 		
@@ -52,7 +75,7 @@ class AudioPlayer {
 		///Stores the soundfile defined by SOUND_UPPER.
 		sf::SoundBuffer sb1;
 		///Stores the soundfile defined by SOUND_LOWER.
-		sf::SoundBuffer sb2
+		sf::SoundBuffer sb2;
 		///Stores the soundfile defined by SOUND_MID.
 		sf::SoundBuffer sb3;
 };

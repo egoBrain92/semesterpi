@@ -3,7 +3,9 @@
 
 #include "ISensor.h"
 
+///The angel in which the sensor is mounted.
 #define SENUP_ANGLE 33
+///Fix value for calulation degree values from the cos() to radient values.
 #define DEGREE_TO_RADIANT_VALUE 180.0
 
 ///Implementation for the sensor that will measure in an 33° angle upwards	

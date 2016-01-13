@@ -19,11 +19,17 @@ class AudioPlayerTest : public CppUnit::TestFixture
 	CPPUNIT_TEST_SUITE_END();
 
 	
-public: 
+public:
+	///Setting up the AudioPlayerTest by creating TestPlayer objects and loading diffrent soundPairs.
 	void setUp();
+	
+	///Deletes the created AudioPlayerTest objects after the test is completed.
 	void tearDown();
 	
+	///Simple test for the testChooseSoundPath() method if the correct soundPath will be returned.
 	void testChooseSoundPath();
+	
+	///Simple test for the testChooseSoundIndex() method with extreme cases.
 	void testChooseSoundIndex();
   
 private:

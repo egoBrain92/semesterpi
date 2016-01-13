@@ -2,11 +2,11 @@
 #include <unistd.h>
 #include <iostream>
 #include <cstdlib>
-#include <wiringPi.h>
 #include "SensorMid.h"
 #include "SensorUp.h"
 #include "SensorLow.h"
 #include "AudioPlayer.h"
+#include "ErrorLogger.h"
 #include <thread>
 #include <mutex>
 #include <SFML/Audio.hpp>
@@ -55,38 +55,11 @@ double distances[NUMBER_OF_SENSORS];
 ///Stores the duration of the silence in between two sound outputs.
 double intensity;
 
-///Logs error messages to the log.txt file in the project directory.
-void writeToLog(const string message){
-	
-	FILE* file = fopen("/home/pi/Desktop/autostartfiles/Blindengürtel/log.txt", "a");
-	if(file != NULL){
-		fprintf(file, "%s\n", message.c_str());
-		fclose(file);
-	}
-}
-
 ///Initiate the values of the distances[] array with INIT_ARRAY_VAL.
 void initDistancesArray(){
 	for(int i = 0; i < NUMBER_OF_SENSORS; i++){
 		distances[i] = INIT_ARRAY_VAL;
 	}
-}
-
-///Sets the GPIO pins for all sensors.
-void setup() {
-        wiringPiSetup();
-        
-        pinMode(ECHO_PIN_SUP, INPUT);
-        pinMode(TRIG_PIN_SUP, OUTPUT);
-        digitalWrite(TRIG_PIN_SUP, LOW);
-
-		pinMode(TRIG_PIN_SLOW, OUTPUT);
-        pinMode(ECHO_PIN_SLOW, INPUT);
-        digitalWrite(TRIG_PIN_SLOW, LOW);
-
-		pinMode(ECHO_PIN_SMID, INPUT);
-		pinMode(TRIG_PIN_SMID, OUTPUT);
-        digitalWrite(TRIG_PIN_SMID, LOW);
 }
 
 ///Used for the thread audioThread which will play sounds in the background.
@@ -109,22 +82,11 @@ void audioFunction(AudioPlayer* ap){
 ///core of the programm
 int main(){
 	initDistancesArray();
-	setup();
-	long travelTimeUp;
-	long travelTimeLow;
-	long travelTimeMid;
-	
+	long travelTimeUp, travelTimeLow, travelTimeMid;
 	int soundIndex;
-	
-	bool checkMid;
-	bool checkUp;
-	bool checkLow;
-	
-	int loop1Protector1;
-	int loop1Protector2;
-
-	int loop2Protector1;
-	int loop2Protector2;
+	bool checkMid, checkUp, checkLow;
+	int loop1Protector1, loop1Protector2;
+	int loop2Protector1, loop2Protector2;
 	
 	SensorMid* senMid;
 	SensorUp* senUp;
@@ -135,28 +97,31 @@ int main(){
 	try{
 		senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	}catch(bad_alloc&){
-		writeToLog("Failed to create SensorMid.");
+		ErrorLogger::writeToLog("Failed to create SensorMid.", ERROR_LOG_PATH);
 		//system("sudo reboot");
 	}
-	
 	try{
 		senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
 	}catch(bad_alloc&){
-		writeToLog("Failed to create SensorUp.");
+		ErrorLogger::writeToLog("Failed to create SensorUp.", ERROR_LOG_PATH);
 		//system("sudo reboot");
 	}
-	
 	try{
 		senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
 	}catch(bad_alloc&){
-		writeToLog("Failed to create SensorLow.");
+		ErrorLogger::writeToLog("Failed to create SensorLow.", ERROR_LOG_PATH);
 		//system("sudo reboot");
 	}
+	
+	wiringPiSetup();
+	senMid->setupPins();
+	senUp->setupPins();
+	senLow->setupPins();
 	
 	try{
 		ap = new AudioPlayer();
 	}catch(bad_alloc&){
-		writeToLog("Failed to create AudioPlayer.");
+		ErrorLogger::writeToLog("Failed to create AudioPlayer.", ERROR_LOG_PATH);
 		//system("sudo reboot");
 	}
 	
@@ -239,7 +204,7 @@ int main(){
 		//cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
 	}
 	audioThread.join();
-	writeToLog("Waiting for Audiothhread failed.");
+	ErrorLogger::writeToLog("Waiting for Audiothhread failed.", ERROR_LOG_PATH);
 	//system("sudo reboot");
 	
     return 0;
