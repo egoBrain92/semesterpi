@@ -53,7 +53,16 @@ mutex intensityMutex;
 double distances[NUMBER_OF_SENSORS];
 
 ///Stores the duration of the silence in between two sound outputs.
-double intensity;	
+double intensity;
+
+void writeToLog(const string message){
+	
+	FILE* file = fopen("log.txt", "a");
+	if(file != NULL){
+		fprintf(file, "%s\n", message.c_str());
+		fclose(file);
+	}
+}
 
 ///Initiate the values of the distances[] array with INIT_ARRAY_VAL.
 void initDistancesArray(){
@@ -98,7 +107,9 @@ void audioFunction(AudioPlayer* ap){
 
 ///core of the programm
 int main()
-{
+{	
+	string myMessage = "hallo";
+	writeToLog(myMessage);
 	initDistancesArray();
 	setup();
 	long travelTimeUp;
@@ -127,28 +138,28 @@ int main()
 	try{
 		senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
 	}catch(bad_alloc&){
-		cout<<"failed to create SensorMid the system will reboot now."<<endl;
+		writeToLog("Failed to create SensorMid");
 		system("sudo reboot");
 	}
 	
 	try{
 		senUp = new SensorUp(ECHO_PIN_SUP, TRIG_PIN_SUP, 0);
 	}catch(bad_alloc&){
-		cout<<"failed to create SensorUp the system will reboot now."<<endl;
+		writeToLog("Failed to create SensorUp");
 		system("sudo reboot");
 	}
 	
 	try{
 		senLow = new SensorLow(ECHO_PIN_SLOW, TRIG_PIN_SLOW, 2);
 	}catch(bad_alloc&){
-		cout<<"failed to create SensorLow the system will reboot now."<<endl;
+		writeToLog("Failed to create SensorLow");
 		system("sudo reboot");
 	}
 	
 	try{
 		ap = new AudioPlayer();
 	}catch(bad_alloc&){
-		cout<<"failed to create AudioPlayer the system will reboot now."<<endl;
+		writeToLog("Failed to create AudioPlayer");
 		system("sudo reboot");
 	}
 
@@ -240,7 +251,7 @@ int main()
 	
 	audioThread.join();
 	
-	cout<<"fatal error the system will reboot now."<<endl;
+	writeToLog("Waiting for Audiothhread failed");
 	system("sudo reboot");
 	
     return 0;

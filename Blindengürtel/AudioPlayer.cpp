@@ -49,7 +49,7 @@ int AudioPlayer::chooseSoundindex(double distances[], int amountSen){
 	distance = MAX_DISTANCE;
 
 	for(i = 0; i < amountSen; i++){
-		if(distances[i] <= distance){
+		if(distances[i] <= distance && distances[i] > 0){
 			distance = distances[i];
 			this->sound->soundIndex = i;
 		}

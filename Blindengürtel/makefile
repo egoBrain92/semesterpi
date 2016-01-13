@@ -13,3 +13,6 @@ wa: Projekt.cpp ISensor.cpp SensorMid.cpp SensorUp.cpp
 a:	
 	sudo ./a.out
 
+test: AudioPlayerTest.cpp AudioPlayer.cpp
+	g++ -std=c++11 AudioPlayerTest.cpp AudioPlayer.cpp -lsfml-audio -lcppunit
+
