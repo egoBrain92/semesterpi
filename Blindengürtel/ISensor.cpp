@@ -62,7 +62,7 @@ void ISensor::initiateMeasurement(){
         delayMicroseconds(5);
         digitalWrite(this->trigPin, HIGH);
 		//wait for the sensor to react if the times is to short the sensor may not trigger
-        delayMicroseconds(5); 
+        delayMicroseconds(10); 
         digitalWrite(this->trigPin, LOW); 
 }
 
