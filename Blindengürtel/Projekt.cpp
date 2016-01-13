@@ -55,6 +55,7 @@ double distances[NUMBER_OF_SENSORS];
 ///Stores the duration of the silence in between two sound outputs.
 double intensity;
 
+///Logs error messages to the log.txt file in the project directory.
 void writeToLog(const string message){
 	
 	FILE* file = fopen("log.txt", "a");

@@ -3,10 +3,12 @@
 #include <cppunit/CompilerOutputter.h>
 #include "AudioPlayerTest.h"
 
+
 using namespace std;
 
 CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( AudioPlayerTest, "AudioPlayerTest" );
- 
+
+///Setting up the AudioPlayerTest by creating TestPlayer objects and loading diffrent soundPairs.
 void AudioPlayerTest::setUp(){
 	ap1 = new AudioPlayer();
 	ap2 = new AudioPlayer();
@@ -22,7 +24,8 @@ void AudioPlayerTest::setUp(){
 	
 	
 }
-	
+
+///Deletes the created AudioPlayerTest objects after the test is completed.
 void AudioPlayerTest::tearDown(){
 	delete ap1;
 	delete ap2;
@@ -30,7 +33,8 @@ void AudioPlayerTest::tearDown(){
 	delete ap4;
 	delete ap5;
 }	
-	
+
+///Simple test for the testChooseSoundPath() method if the correct soundPath will be returned.
 void AudioPlayerTest::testChooseSoundPath(){
 	string noSound = NO_SOUND;
 	string upperSound = SOUND_UPPER;
@@ -45,7 +49,8 @@ void AudioPlayerTest::testChooseSoundPath(){
 	CPPUNIT_ASSERT_EQUAL( ap5->chooseSoundPath(), errSound );
 	
 }
-	
+
+///Simple test for the testChooseSoundIndex() method with extreme cases.
 void AudioPlayerTest::testChooseSoundIndex(){
 	int senAmount = 3;
 	
