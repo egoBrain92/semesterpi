@@ -13,9 +13,9 @@
 #include <cmath>
 
 ///The time after the measurement is considered a bad value in microseconds.
-#define SENSOR_BAD_READ 40000
+#define SENSOR_BAD_READ 38000
 ///After a measurement the sensor should not instantly be triggered again.
-#define WAIT_SENSOR_COOLDOWN 51000
+#define WAIT_SENSOR_COOLDOWN 50000
 ///Delay duration that is needed after initiating the measurements in microseconds.
 #define WAIT_FOR_SENSORS 400
 ///One second in microseconds.
@@ -44,13 +44,8 @@ mutex soundPathMutex;
 ///Is used to protect the intensity from the main and AudioPlayer thread.
 mutex intensityMutex;
 
-/*distances of all Sensors
-0 : Sensor Up
-1 : Sensor Mid
-2 : Sensor down*/
-
 ///Holds the averaged values of the measurements.
-double distances[NUMBER_OF_SENSORS];
+double distances[NUMBER_OF_SENSORS]; //distances[0] = SensorUp, distances[1] = SensorMid, distances[2] = SensorLow
 
 ///Stores the duration of the silence in between two sound outputs.
 double intensity;
@@ -79,15 +74,13 @@ void audioFunction(AudioPlayer* ap){
 	}
 }
 
-///core of the programm
+///The core of the Programm. The function will operate an endless loop.
 int main(){
 	initDistancesArray();
 	long travelTimeUp, travelTimeLow, travelTimeMid;
 	int soundIndex;
 	bool checkMid, checkUp, checkLow;
-	//int loopProtector1, loopProtector2;
-	int loop1Protector1, loop1Protector2;
-	int loop2Protector1, loop2Protector2;
+	int loopProtector1, loopProtector2;
 	
 	SensorMid* senMid;
 	SensorUp* senUp;
@@ -115,7 +108,7 @@ int main(){
 		//system("sudo reboot");
 	}
 	
-	wiringPiSetup();
+	wiringPiSetup(); //seting the necessary GPIO pins
 	senMid->setupPins();
 	senUp->setupPins();
 	senLow->setupPins();
@@ -140,30 +133,32 @@ int main(){
 		
 		usleep(WAIT_FOR_SENSORS); //wait for Sensor to react
 		
-		loop1Protector1 = micros();
-		loop1Protector2 = 0;
+		loopProtector1 = micros();
+		loopProtector2 = 0;
 		
+		//listen to the echo GPIO pins of each sensor until there measuring process is started
 		while(digitalRead(senMid->getEchoPin()) == LOW && 
 			  digitalRead(senUp->getEchoPin()) == LOW && 
 			  digitalRead(senLow->getEchoPin()) == LOW){
 				  
-			loop1Protector2 = abs(micros() - loop1Protector1);
-			if(loop1Protector2 > SENSOR_BAD_READ){
+			loopProtector2 = abs(micros() - loopProtector1);
+			if(loopProtector2 > SENSOR_BAD_READ){
 				break; //break from the loop if the sensor did not react properly
 			}
 		}
 		
 		long startTime = micros();
 		
-		loop2Protector1 = micros();
-		loop2Protector2 = 0;
+		loopProtector1 = micros();
+		loopProtector2 = 0;
 		
+		//listen to the echo GPIO pins of each sensor until there measuring process is done
 		while(digitalRead(senMid->getEchoPin()) == HIGH || 
 			  digitalRead(senUp->getEchoPin()) == HIGH || 
 			  digitalRead(senLow->getEchoPin()) == HIGH){
 			
-			loop2Protector2 = abs(micros() - loop2Protector1);
-			if(loop2Protector2 > SENSOR_BAD_READ){
+			loopProtector2 = abs(micros() - loopProtector1);
+			if(loopProtector2 > SENSOR_BAD_READ){
 				break; //break from the loop if the sensor did not react properly
 			}
 			if(digitalRead(senMid->getEchoPin()) == LOW && checkMid == false){ //calculate the traveltime for each sensor
@@ -206,8 +201,8 @@ int main(){
 	}
 	//this part should never be reached
 	audioThread.join(); 
-	ErrorLogger::writeToLog("Waiting for Audiothhread failed.", ERROR_LOG_PATH);
-	//system("sudo reboot");
+	ErrorLogger::writeToLog("Fatal Error: Waiting for Audiothhread success.", ERROR_LOG_PATH);
+	system("sudo reboot");
 	
     return 0;
 }

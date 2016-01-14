@@ -35,7 +35,7 @@ class AudioPlayer {
 		///Destroys the created AudioPlayer object and uses delete to free the memeory of the variable sound.
 		~AudioPlayer();
 		
-		///Palys the sound that is specified in soundPath.\n
+		///Plays the sound that is specified in soundPath.\n
 		///player.play() creates a new thread and therefore the audio will play without blocking anything in the process.
 		void playSound();
 		
