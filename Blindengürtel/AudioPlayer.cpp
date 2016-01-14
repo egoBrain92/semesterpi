@@ -90,6 +90,21 @@ string AudioPlayer::chooseSoundPath(){
 	return this->sound->soundPath;
 }
 
+void AudioPlayer::audioThreadFunction(double intensity, mutex soundPathMutex, mutex intensityMutex){
+	
+	while(1){
+		soundPathMutex.lock();
+		this->playSound();
+		soundPathMutex.unlock();
+
+		intensityMutex.lock();
+		this->setPause(intensity * ONE_SECOND);
+		intensityMutex.unlock();
+
+		usleep(this->pause);
+	}
+}
+
 int AudioPlayer::getPause(){
 	return this->pause;
 }

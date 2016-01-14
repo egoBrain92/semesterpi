@@ -18,8 +18,6 @@
 #define WAIT_SENSOR_COOLDOWN 50000
 ///Delay duration that is needed after initiating the measurements in microseconds.
 #define WAIT_FOR_SENSORS 400
-///One second in microseconds.
-#define ONE_SECOND 1000000
 ///The number of sensors that are connected to the pi.
 #define NUMBER_OF_SENSORS 3
 ///Initial values for the distances[NUMBER_OF_SENSORS] array so the first few measurements don't create bad output.
@@ -40,43 +38,12 @@
 using namespace std;
 
 ///Is used to protect the soundPath from the main and AudioPlayer thread.
-mutex soundPathMutex;
+//mutex soundPathMutex;
 ///Is used to protect the intensity from the main and AudioPlayer thread.
-mutex intensityMutex;
-
-///Holds the averaged values of the measurements.
-double distances[NUMBER_OF_SENSORS]; //distances[0] = SensorUp, distances[1] = SensorMid, distances[2] = SensorLow
-
-///Stores the duration of the silence in between two sound outputs.
-double intensity;
-
-///Initiate the values of the distances[] array with INIT_ARRAY_VAL.
-void initDistancesArray(){
-	for(int i = 0; i < NUMBER_OF_SENSORS; i++){
-		distances[i] = INIT_ARRAY_VAL;
-	}
-}
-
-///Used for the thread audioThread which will play sounds in the background.
-///@param ap is the AudioPlayer Object that is used to play and load sounds.
-void audioFunction(AudioPlayer* ap){
-	
-	while(1){
-		soundPathMutex.lock();
-		ap->playSound();
-		soundPathMutex.unlock();
-
-		intensityMutex.lock();
-		ap->setPause(intensity * ONE_SECOND);
-		intensityMutex.unlock();
-
-		usleep(ap->getPause());
-	}
-}
+//mutex intensityMutex;
 
 ///The core of the Programm. The function will operate an endless loop.
 int main(){
-	initDistancesArray();
 	long travelTimeUp, travelTimeLow, travelTimeMid;
 	int soundIndex;
 	bool checkMid, checkUp, checkLow;
@@ -87,6 +54,21 @@ int main(){
 	SensorLow* senLow;
 	
 	AudioPlayer* ap;
+	
+	//Stores the duration of the silence in between two sound outputs.
+	double intensity = 0;
+	
+	//Is used to protect the soundPath from the main and AudioPlayer thread.
+	mutex soundPathMutex;
+	//Is used to protect the intensity from the main and AudioPlayer thread.
+	mutex intensityMutex;
+	
+	//Holds the averaged values of the measurements.
+	//double distances[NUMBER_OF_SENSORS]; //SensorUp, distances[1] = SensorMid, distances[2] = SensorLow
+	double distances[NUMBER_OF_SENSORS];
+	for(int i = 0; i < NUMBER_OF_SENSORS; i++){ //set each element to INIT_ARRAY_VAL
+		distances[i] = INIT_ARRAY_VAL;
+	}
 	
 	//create the sensor objects for getting access to there methods
 	try{
@@ -108,7 +90,7 @@ int main(){
 		//system("sudo reboot");
 	}
 	
-	wiringPiSetup(); //seting the necessary GPIO pins
+	wiringPiSetup(); //setting the necessary GPIO pins
 	senMid->setupPins();
 	senUp->setupPins();
 	senLow->setupPins();
@@ -120,7 +102,7 @@ int main(){
 		//system("sudo reboot");
 	}
 	
-	thread audioThread(audioFunction, ap); //create the audioThread to play sounds in the background
+	thread audioThread(ap->audioThreadFunction, intensity, soundPathMutex, intensityMutex); //create the audioThread to play sounds in the background
 	
 	while(1){
 		checkMid = false; //reset the check variables for the next loop cycle
@@ -136,7 +118,7 @@ int main(){
 		loopProtector1 = micros();
 		loopProtector2 = 0;
 		
-		//listen to the echo GPIO pins of each sensor until there measuring process is started
+		//listen to the echo GPIO pins of each sensor until their measuring process is started
 		while(digitalRead(senMid->getEchoPin()) == LOW && 
 			  digitalRead(senUp->getEchoPin()) == LOW && 
 			  digitalRead(senLow->getEchoPin()) == LOW){
@@ -152,7 +134,7 @@ int main(){
 		loopProtector1 = micros();
 		loopProtector2 = 0;
 		
-		//listen to the echo GPIO pins of each sensor until there measuring process is done
+		//listen to the echo GPIO pins of each sensor until their measuring process is done
 		while(digitalRead(senMid->getEchoPin()) == HIGH || 
 			  digitalRead(senUp->getEchoPin()) == HIGH || 
 			  digitalRead(senLow->getEchoPin()) == HIGH){

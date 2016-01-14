@@ -1,5 +1,7 @@
 #include <string>
 #include <SFML/Audio.hpp>
+#include <mutex>
+#include <thread>
 
 #ifndef AUDIOPLAYER_H_
 #define AUDIOPLAYER_H_
@@ -14,6 +16,8 @@
 #define SOUND_LOWER "/home/pi/Desktop/autostartfiles/Blindengürtel/SOUND_LOWER.wav"
 ///Path of the soundfile for possible errors.
 #define ERROR_SOUND "/home/pi/Desktop/autostartfiles/Blindengürtel/ERROR_SOUND.wav"
+///One second in microseconds.
+#define ONE_SECOND 1000000
 
 ///The distance in which the sensor should trigger sound outputs.
 #define MAX_DISTANCE 150
@@ -36,7 +40,10 @@ class AudioPlayer {
 		~AudioPlayer();
 		
 		///Plays the sound that is specified in soundPath.\n
-		///player.play() creates a new thread and therefore the audio will play without blocking anything in the process.
+		///player.play() Starts or resumes playing the sound. This function starts the stream if it was stopped,\n
+		///resumes it if it was paused, and restarts itfrom beginning if it was it already playing.\n
+		///This function uses its own thread so that it doesn't block the rest of the program while the sound is played.\n
+		///source: http://www.sfml-dev.org/documentation/2.3.2/classsf_1_1Sound.php#a2953ffe632536e72e696fd880ced2532
 		void playSound();
 		
 		///Chooses the soundIndex for the latest measurements.
@@ -48,6 +55,10 @@ class AudioPlayer {
 		///Chooses the soundPath that should be played for the latest measurement.
 		///@returns returns the soundPath to the file which should be played
 		std::string chooseSoundPath(void);
+		
+		///Used for the thread audioThread which will play sounds in the background.
+		///@param ap is the AudioPlayer Object that is used to play and load sounds.
+		static void audioThreadFunction(double intensity, std::mutex soundPathMutex, std::mutex intensityMutex);
 		
 		///Sets the duration of the silence in between two sound outputs.
 		///@param newPause Will be the new duration of the silence in between two sound outputs.
