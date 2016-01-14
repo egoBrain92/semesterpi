@@ -85,6 +85,7 @@ int main(){
 	long travelTimeUp, travelTimeLow, travelTimeMid;
 	int soundIndex;
 	bool checkMid, checkUp, checkLow;
+	//int loopProtector1, loopProtector2;
 	int loop1Protector1, loop1Protector2;
 	int loop2Protector1, loop2Protector2;
 	
@@ -94,8 +95,9 @@ int main(){
 	
 	AudioPlayer* ap;
 	
+	//create the sensor objects for getting access to there methods
 	try{
-		senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1);
+		senMid = new SensorMid(ECHO_PIN_SMID, TRIG_PIN_SMID, 1); 
 	}catch(bad_alloc&){
 		ErrorLogger::writeToLog("Failed to create SensorMid.", ERROR_LOG_PATH);
 		//system("sudo reboot");
@@ -125,14 +127,14 @@ int main(){
 		//system("sudo reboot");
 	}
 	
-	thread audioThread(audioFunction, ap); //create thread to play sounds in the background
+	thread audioThread(audioFunction, ap); //create the audioThread to play sounds in the background
 	
 	while(1){
-		checkMid = false;
+		checkMid = false; //reset the check variables for the next loop cycle
 		checkUp = false;
 		checkLow = false;
 		
-		senMid->initiateMeasurement();
+		senMid->initiateMeasurement(); //start measurements for all sensors
 		senLow->initiateMeasurement();
 		senUp->initiateMeasurement();
 		
@@ -164,8 +166,7 @@ int main(){
 			if(loop2Protector2 > SENSOR_BAD_READ){
 				break; //break from the loop if the sensor did not react properly
 			}
-			//usleep(50);
-			if(digitalRead(senMid->getEchoPin()) == LOW && checkMid == false){
+			if(digitalRead(senMid->getEchoPin()) == LOW && checkMid == false){ //calculate the traveltime for each sensor
 				travelTimeMid = abs(micros() - startTime);
 				checkMid = true;
 			}
@@ -178,32 +179,33 @@ int main(){
 				checkLow = true;
 			}		
 		}
-
-		senUp->collectMeasurements(travelTimeUp);
+		//calculate the distances and store them  in the data[] array of each sensor
+		senUp->collectMeasurements(travelTimeUp); 
 		senLow->collectMeasurements(travelTimeLow);
 		senMid->collectMeasurements(travelTimeMid);
 		
-		//push averaged data of each sensor 
+		//push averaged data of each sensor into the global distances[] array
 		senMid->pushData(distances);
 		senUp->pushData(distances);
 		senLow->pushData(distances);
 	
 		usleep(WAIT_SENSOR_COOLDOWN); //break between measurements ~20 measurements per second
 		
-		soundIndex = ap->chooseSoundindex(distances, NUMBER_OF_SENSORS);
+		soundIndex = ap->chooseSoundindex(distances, NUMBER_OF_SENSORS); //chooses the appropriate soundIndex to play
 	
 		soundPathMutex.lock();
-		ap->chooseSoundPath();
+		ap->chooseSoundPath(); //chooses the appropriate Path to the soundfile that should be played
 		soundPathMutex.unlock();
 
-		if(ap->getSoundPair()->soundIndex != -1){
+		if(ap->getSoundPair()->soundIndex != -1){ 
 			intensityMutex.lock();
-			intensity = distances[soundIndex]/MAX_DISTANCE;
+			intensity = distances[soundIndex]/MAX_DISTANCE; //unless no sound is played a new intensity is calculated
 			intensityMutex.unlock();
 		}
 		//cout<<"SensorUp: "<<distances[0]<<" / SensorMid: "<<distances[1]<<" / SensorLow: "<<distances[2]<<endl;
 	}
-	audioThread.join();
+	//this part should never be reached
+	audioThread.join(); 
 	ErrorLogger::writeToLog("Waiting for Audiothhread failed.", ERROR_LOG_PATH);
 	//system("sudo reboot");
 	
